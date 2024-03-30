@@ -1,4 +1,4 @@
-BINARY_NAME=tariff_service
+BINARY_NAME=filter_service
 
 run:
 	go run app/cmd/main.go
