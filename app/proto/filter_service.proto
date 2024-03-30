@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package main;
+
+option go_package = "./proto";
+
+import "filter_message.proto";
+
+
+service FilterService {
+    rpc GetFilterValues(GetFilterValuesReq) returns (GetFilterValuesResp);
+}
+
+

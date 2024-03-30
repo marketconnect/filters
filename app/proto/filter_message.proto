@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package main;
+
+
+option go_package = "./proto";
+
+
+// filter values
+message GetFilterValuesReq {
+    string filterName = 1;
+}
+
+message GetFilterValuesResp {
+    repeated string values = 1;
+}
+
