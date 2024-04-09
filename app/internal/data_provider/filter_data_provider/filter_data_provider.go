@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"time"
 
-	"github.com/go-redis/redis/v8" // Убедитесь, что используете версию v8
+	"github.com/go-redis/redis/v8"
 	client "github.com/marketconnect/db_client/postgresql"
 )
 
@@ -13,11 +13,10 @@ const (
 	selectQuery = `SELECT DISTINCT name FROM filters WHERE filter_name = $1`
 )
 
-// Инициализация клиента Redis
 var redisClient = redis.NewClient(&redis.Options{
-	Addr:     "localhost:6379", // По умолчанию Redis слушает порт 6379
-	Password: "",               // Пароль не установлен
-	DB:       0,                // Использование базы данных номер 0
+	Addr:     "localhost:6379",
+	Password: "",
+	DB:       0,
 })
 
 type filterStorage struct {

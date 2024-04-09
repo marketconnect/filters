@@ -15,3 +15,12 @@ message GetFilterValuesResp {
     repeated string values = 1;
 }
 
+
+// search query
+message GetSearchQueryReq {
+    repeated string queries = 1;
+}
+
+message GetSearchQueryResp {
+    repeated int32 frequencies = 1;
+}
