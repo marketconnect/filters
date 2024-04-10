@@ -18,11 +18,10 @@ CREATE TABLE search_phrases (
 
 CREATE INDEX idx_search_phrases_phrase ON search_phrases(phrase);
 
-CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';
+CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';s
 GRANT CONNECT ON DATABASE test_db TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.filters TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.search_phrases TO test_user;
 GRANT ALL ON SEQUENCE public.filters_id_seq TO test_user;
-ALTER SEQUENCE search_phrases_id_seq OWNER TO test_user;
 GRANT ALL ON SEQUENCE public.search_phrases_id_seq TO test_user;
 GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO test_user;
