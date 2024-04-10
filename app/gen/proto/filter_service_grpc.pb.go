@@ -23,6 +23,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type FilterServiceClient interface {
 	GetFilterValues(ctx context.Context, in *GetFilterValuesReq, opts ...grpc.CallOption) (*GetFilterValuesResp, error)
+	GetSearchQuery(ctx context.Context, in *GetSearchQueryReq, opts ...grpc.CallOption) (*GetSearchQueryResp, error)
 }
 
 type filterServiceClient struct {
@@ -42,11 +43,21 @@ func (c *filterServiceClient) GetFilterValues(ctx context.Context, in *GetFilter
 	return out, nil
 }
 
+func (c *filterServiceClient) GetSearchQuery(ctx context.Context, in *GetSearchQueryReq, opts ...grpc.CallOption) (*GetSearchQueryResp, error) {
+	out := new(GetSearchQueryResp)
+	err := c.cc.Invoke(ctx, "/main.FilterService/GetSearchQuery", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FilterServiceServer is the server API for FilterService service.
 // All implementations must embed UnimplementedFilterServiceServer
 // for forward compatibility
 type FilterServiceServer interface {
 	GetFilterValues(context.Context, *GetFilterValuesReq) (*GetFilterValuesResp, error)
+	GetSearchQuery(context.Context, *GetSearchQueryReq) (*GetSearchQueryResp, error)
 	mustEmbedUnimplementedFilterServiceServer()
 }
 
@@ -56,6 +67,9 @@ type UnimplementedFilterServiceServer struct {
 
 func (UnimplementedFilterServiceServer) GetFilterValues(context.Context, *GetFilterValuesReq) (*GetFilterValuesResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFilterValues not implemented")
+}
+func (UnimplementedFilterServiceServer) GetSearchQuery(context.Context, *GetSearchQueryReq) (*GetSearchQueryResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSearchQuery not implemented")
 }
 func (UnimplementedFilterServiceServer) mustEmbedUnimplementedFilterServiceServer() {}
 
@@ -88,6 +102,24 @@ func _FilterService_GetFilterValues_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FilterService_GetSearchQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSearchQueryReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilterServiceServer).GetSearchQuery(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/main.FilterService/GetSearchQuery",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilterServiceServer).GetSearchQuery(ctx, req.(*GetSearchQueryReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FilterService_ServiceDesc is the grpc.ServiceDesc for FilterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -99,91 +131,9 @@ var FilterService_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "GetFilterValues",
 			Handler:    _FilterService_GetFilterValues_Handler,
 		},
-	},
-	Streams:  []grpc.StreamDesc{},
-	Metadata: "filter_service.proto",
-}
-
-// SearchQueryServiceClient is the client API for SearchQueryService service.
-//
-// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type SearchQueryServiceClient interface {
-	GetSearchQuery(ctx context.Context, in *GetSearchQueryReq, opts ...grpc.CallOption) (*GetSearchQueryResp, error)
-}
-
-type searchQueryServiceClient struct {
-	cc grpc.ClientConnInterface
-}
-
-func NewSearchQueryServiceClient(cc grpc.ClientConnInterface) SearchQueryServiceClient {
-	return &searchQueryServiceClient{cc}
-}
-
-func (c *searchQueryServiceClient) GetSearchQuery(ctx context.Context, in *GetSearchQueryReq, opts ...grpc.CallOption) (*GetSearchQueryResp, error) {
-	out := new(GetSearchQueryResp)
-	err := c.cc.Invoke(ctx, "/main.SearchQueryService/GetSearchQuery", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-// SearchQueryServiceServer is the server API for SearchQueryService service.
-// All implementations must embed UnimplementedSearchQueryServiceServer
-// for forward compatibility
-type SearchQueryServiceServer interface {
-	GetSearchQuery(context.Context, *GetSearchQueryReq) (*GetSearchQueryResp, error)
-	mustEmbedUnimplementedSearchQueryServiceServer()
-}
-
-// UnimplementedSearchQueryServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedSearchQueryServiceServer struct {
-}
-
-func (UnimplementedSearchQueryServiceServer) GetSearchQuery(context.Context, *GetSearchQueryReq) (*GetSearchQueryResp, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetSearchQuery not implemented")
-}
-func (UnimplementedSearchQueryServiceServer) mustEmbedUnimplementedSearchQueryServiceServer() {}
-
-// UnsafeSearchQueryServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to SearchQueryServiceServer will
-// result in compilation errors.
-type UnsafeSearchQueryServiceServer interface {
-	mustEmbedUnimplementedSearchQueryServiceServer()
-}
-
-func RegisterSearchQueryServiceServer(s grpc.ServiceRegistrar, srv SearchQueryServiceServer) {
-	s.RegisterService(&SearchQueryService_ServiceDesc, srv)
-}
-
-func _SearchQueryService_GetSearchQuery_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetSearchQueryReq)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(SearchQueryServiceServer).GetSearchQuery(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/main.SearchQueryService/GetSearchQuery",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SearchQueryServiceServer).GetSearchQuery(ctx, req.(*GetSearchQueryReq))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-// SearchQueryService_ServiceDesc is the grpc.ServiceDesc for SearchQueryService service.
-// It's only intended for direct use with grpc.RegisterService,
-// and not to be introspected or modified (even as a copy)
-var SearchQueryService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "main.SearchQueryService",
-	HandlerType: (*SearchQueryServiceServer)(nil),
-	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetSearchQuery",
-			Handler:    _SearchQueryService_GetSearchQuery_Handler,
+			Handler:    _FilterService_GetSearchQuery_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -8,8 +8,7 @@ import "filter_message.proto";
 
 service FilterService {
     rpc GetFilterValues(GetFilterValuesReq) returns (GetFilterValuesResp);
-}
-
-service SearchQueryService {
     rpc GetSearchQuery(GetSearchQueryReq) returns (GetSearchQueryResp);
 }
+
+
