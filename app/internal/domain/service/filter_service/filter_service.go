@@ -15,6 +15,7 @@ import (
 type FilterDataProvider interface {
 	GetDistinctNames(ctx context.Context, filterName string) ([]string, error)
 	GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error)
+	GetKeywordsByFilter(ctx context.Context, filterID int64) (*pb.GetKeywordsByFilterResp, error)
 }
 type TokenManager interface {
 	Verify(accessToken string) (*uint64, error)
@@ -99,7 +100,7 @@ func (service *FilterService) GetSearchQuery(ctx context.Context, req *pb.GetSea
 		return nil, status.Error(codes.InvalidArgument, "request is nil")
 	}
 	// Validate input parameters
-	if req == nil || len(req.Queries) == 0 {
+	if len(req.Queries) == 0 {
 		service.logger.Error("request is nil or queries are empty")
 		return nil, status.Error(codes.InvalidArgument, "request is nil or queries are empty")
 	}
@@ -120,4 +121,44 @@ func (service *FilterService) GetSearchQuery(ctx context.Context, req *pb.GetSea
 	return &pb.GetSearchQueryResp{
 		Frequencies: freqInt32,
 	}, nil
+}
+
+func (service *FilterService) GetKeywordsByFilter(ctx context.Context, req *pb.GetKeywordsByFilterReq) (*pb.GetKeywordsByFilterResp, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		service.logger.Error("metadata is not provided")
+		return nil, status.Errorf(codes.Unauthenticated, "metadata is not provided")
+	}
+
+	values := md["authorization"]
+	if len(values) == 0 {
+		service.logger.Error("authorization token is not provided")
+		return nil, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
+	}
+
+	accessToken := values[0]
+	userID, err := service.tokenManager.Verify(accessToken)
+	if err != nil {
+		service.logger.Error("access token is invalid (userID): %v", err, userID)
+		return nil, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
+	}
+
+	if req == nil {
+		service.logger.Error("request is nil")
+		return nil, status.Error(codes.InvalidArgument, "request is nil")
+	}
+
+	if req.FilterID == 0 {
+		service.logger.Error("Filter ID is required")
+		return nil, status.Error(codes.InvalidArgument, "Filter ID is required")
+	}
+
+	// Fetch keywords by filter
+	keywordsResp, err := service.filterDataProvider.GetKeywordsByFilter(ctx, req.FilterID)
+	if err != nil {
+		service.logger.Error("could not get keywords by filter (userID: %d): %v", userID, err)
+		return nil, status.Errorf(codes.Internal, "could not get keywords by filter: %v", err)
+	}
+
+	return keywordsResp, nil
 }

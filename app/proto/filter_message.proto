@@ -24,3 +24,20 @@ message GetSearchQueryReq {
 message GetSearchQueryResp {
     repeated int32 frequencies = 1;
 }
+
+
+// keywords by filter
+message GetKeywordsByFilterReq {
+    int64 filterID = 1;
+}
+
+message KeywordByFilter {
+    string normquery  = 1;
+    int32 frequency   = 2;
+    int32 competition = 3; 
+    int32 count       = 4; 
+}
+
+message GetKeywordsByFilterResp {
+    repeated KeywordByFilter keywords = 1;
+}

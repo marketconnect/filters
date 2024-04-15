@@ -6,6 +6,8 @@ import (
 	"fmt"
 	"time"
 
+	pb "filters/app/gen/proto"
+
 	"github.com/go-redis/redis/v8"
 	client "github.com/marketconnect/db_client/postgresql"
 )
@@ -70,12 +72,12 @@ func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([
 
 	// Construct the full SQL query
 	query := fmt.Sprintf(`
-    WITH input_phrases(phrase) AS (
+    WITH input_phrases(kw) AS (
         %s
     )
-    SELECT ip.phrase, COALESCE(sp.frequency, 0) AS frequency
+    SELECT ip.kw, COALESCE(sp.freq, 0) AS freq
     FROM input_phrases ip
-    LEFT JOIN search_phrases sp ON ip.phrase = sp.phrase;
+    LEFT JOIN search_phrases sp ON ip.kw = sp.kw;
     `, valuesStr)
 
 	// Execute the query without additional arguments
@@ -105,4 +107,46 @@ func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([
 	}
 
 	return frequencies, nil
+}
+
+func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64) (*pb.GetKeywordsByFilterResp, error) {
+	query := `
+	SELECT DISTINCT
+    kw.normquery,
+    sp.freq AS frequency,
+    kw.cards_qty AS competition,
+    c.count,
+    CASE 
+        WHEN kw.cards_qty = 0 THEN 0 
+        ELSE c.count::FLOAT / kw.cards_qty 
+    END AS relevance_ratio  -- Добавлено вычисляемое поле для использования в ORDER BY
+FROM categories c
+JOIN kw ON c.kw_id = kw.id
+JOIN search_phrases sp ON kw.normquery = sp.kw
+WHERE c.filter_id = $1
+ORDER BY relevance_ratio DESC,sp.freq DESC LIMIT 1000 OFFSET 0
+`
+
+	rows, err := s.client.Query(ctx, query, filterID)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query for filter ID %d: %w", filterID, err)
+	}
+	defer rows.Close()
+
+	resp := &pb.GetKeywordsByFilterResp{}
+	for rows.Next() {
+		var relevanceRatio int64
+		var keyword pb.KeywordByFilter
+		err := rows.Scan(&keyword.Normquery, &keyword.Frequency, &keyword.Competition, &keyword.Count, &relevanceRatio)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		resp.Keywords = append(resp.Keywords, &keyword)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating rows: %w", err)
+	}
+
+	return resp, nil
 }

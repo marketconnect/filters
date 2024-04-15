@@ -9,16 +9,39 @@ CREATE INDEX idx_filters_on_filter_name ON filters (filter_name);
 
 CREATE TABLE public.search_phrases (
     id SERIAL PRIMARY KEY,
-    phrase TEXT NOT NULL UNIQUE,
-    frequency INTEGER NOT NULL DEFAULT 0
+    kw TEXT NOT NULL UNIQUE,
+    freq INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE INDEX idx_search_phrases_phrase ON search_phrases(phrase);
 
-CREATE USER test_user WITH ENCRYPTED PASSWORD 'filter_user_031501';s
-GRANT CONNECT ON DATABASE parsing TO filter_user;
-GRANT ALL PRIVILEGES ON TABLE public.filters TO filter_user;
-GRANT ALL PRIVILEGES ON TABLE public.search_phrases TO filter_user;
-GRANT ALL ON SEQUENCE public.filters_id_seq TO filter_user;
-GRANT ALL ON SEQUENCE public.search_phrases_id_seq TO filter_user;
-GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO filter_user;
+CREATE TABLE kw (
+    id SERIAL PRIMARY KEY,        
+    name TEXT NOT NULL,          
+    normquery TEXT NOT NULL,     
+    cards_qty INTEGER NOT NULL   
+);
+
+CREATE TABLE categories (
+    id SERIAL PRIMARY KEY,         
+    kw_id INTEGER NOT NULL,        
+    filter_id INTEGER NOT NULL,    
+    count INTEGER NOT NULL,        
+    FOREIGN KEY (kw_id) REFERENCES kw (id)   
+);
+
+
+
+
+CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';s
+GRANT CONNECT ON DATABASE parsing TO test_user;
+GRANT ALL PRIVILEGES ON TABLE public.filters TO test_user;
+GRANT ALL PRIVILEGES ON TABLE public.kw TO test_user;
+GRANT ALL PRIVILEGES ON TABLE public.categories TO test_user;
+GRANT ALL PRIVILEGES ON TABLE public.search_phrases TO test_user;
+GRANT ALL ON SEQUENCE public.filters_id_seq TO test_user;
+GRANT ALL ON SEQUENCE public.kw_id_seq TO test_user;
+GRANT ALL ON SEQUENCE public.categories_id_seq TO test_user;
+GRANT ALL ON SEQUENCE public.search_phrases_id_seq TO test_user;
+GRANT ALL ON ALL SEQUENCES IN SCHEMA public TO test_user;
+
