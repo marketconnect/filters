@@ -31,6 +31,18 @@ CREATE TABLE categories (
 );
 
 
+CREATE TABLE lemmas (
+    id SERIAL PRIMARY KEY,
+    lemma TEXT NOT NULL UNIQUE
+);
+
+CREATE TABLE kw_lemmas (
+    kw_id INTEGER NOT NULL,
+    lemma_id INTEGER NOT NULL,
+    FOREIGN KEY (kw_id) REFERENCES kw (id),
+    FOREIGN KEY (lemma_id) REFERENCES lemmas (id),
+    PRIMARY KEY (kw_id, lemma_id)
+);
 
 
 CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';
