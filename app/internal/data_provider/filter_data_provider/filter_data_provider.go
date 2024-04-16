@@ -119,7 +119,7 @@ func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64,
     CASE 
         WHEN kw.cards_qty = 0 THEN 0 
         ELSE c.count::FLOAT / kw.cards_qty 
-    END AS relevance_ratio  -- Добавлено вычисляемое поле для использования в ORDER BY
+    END AS relevance_ratio
 	FROM categories c
 	JOIN kw ON c.kw_id = kw.id
 	JOIN search_phrases sp ON kw.normquery = sp.kw
@@ -134,7 +134,7 @@ func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64,
 	defer rows.Close()
 	resp := &pb.GetKeywordsByFilterResp{}
 	for rows.Next() {
-		var relevanceRatio int64
+		var relevanceRatio float64
 		var keyword pb.KeywordByFilter
 		err := rows.Scan(&keyword.Normquery, &keyword.Frequency, &keyword.Competition, &keyword.Count, &relevanceRatio)
 		if err != nil {
