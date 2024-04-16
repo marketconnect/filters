@@ -29,6 +29,8 @@ message GetSearchQueryResp {
 // keywords by filter
 message GetKeywordsByFilterReq {
     int64 filterID = 1;
+    int32 limit    = 2; 
+    int32 offset   = 3;
 }
 
 message KeywordByFilter {

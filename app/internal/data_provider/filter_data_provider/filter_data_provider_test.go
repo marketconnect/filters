@@ -77,25 +77,28 @@ func TestGetKeywordsByFilter(t *testing.T) {
 
 	storage := filter_data_provider.NewFilterStorage(dbPool)
 
-	filterID := int64(1) // Assuming filter ID 1 is used in the test data setup
-	resp, err := storage.GetKeywordsByFilter(ctx, filterID)
+	filterID := int64(1) // Test with an existing filter ID
+	limit := 10
+	offset := 0
+
+	resp, err := storage.GetKeywordsByFilter(ctx, filterID, limit, offset)
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
 	assert.Len(t, resp.Keywords, 2, "Expected two keywords to be fetched")
 
-	// Check the details of the fetched keywords
-	expectedResults := []*pb.KeywordByFilter{
+	// Detailed checks on the returned keywords
+	expected := []*pb.KeywordByFilter{
 		{Normquery: "keyword1", Frequency: 20, Competition: 10, Count: 100},
 		{Normquery: "keyword2", Frequency: 10, Competition: 5, Count: 50},
 	}
+
 	for i, keyword := range resp.Keywords {
-		assert.Equal(t, expectedResults[i].Normquery, keyword.Normquery)
-		assert.Equal(t, expectedResults[i].Frequency, keyword.Frequency)
-		assert.Equal(t, expectedResults[i].Competition, keyword.Competition)
-		assert.Equal(t, expectedResults[i].Count, keyword.Count)
+		assert.Equal(t, expected[i].Normquery, keyword.Normquery)
+		assert.Equal(t, expected[i].Frequency, keyword.Frequency)
+		assert.Equal(t, expected[i].Competition, keyword.Competition)
+		assert.Equal(t, expected[i].Count, keyword.Count)
 	}
 }
-
 func setupTestRedis(t *testing.T) *redis.Client {
 	client := redis.NewClient(&redis.Options{
 		Addr:     testRedisAddr,

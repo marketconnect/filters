@@ -33,7 +33,7 @@ CREATE TABLE categories (
 
 
 
-CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';s
+CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';
 GRANT CONNECT ON DATABASE parsing TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.filters TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.kw TO test_user;

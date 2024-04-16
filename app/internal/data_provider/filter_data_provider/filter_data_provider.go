@@ -109,7 +109,7 @@ func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([
 	return frequencies, nil
 }
 
-func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64) (*pb.GetKeywordsByFilterResp, error) {
+func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64, limit int, offset int) (*pb.GetKeywordsByFilterResp, error) {
 	query := `
 	SELECT DISTINCT
     kw.normquery,
@@ -120,19 +120,18 @@ func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64)
         WHEN kw.cards_qty = 0 THEN 0 
         ELSE c.count::FLOAT / kw.cards_qty 
     END AS relevance_ratio  -- Добавлено вычисляемое поле для использования в ORDER BY
-FROM categories c
-JOIN kw ON c.kw_id = kw.id
-JOIN search_phrases sp ON kw.normquery = sp.kw
-WHERE c.filter_id = $1
-ORDER BY relevance_ratio DESC,sp.freq DESC LIMIT 1000 OFFSET 0
+	FROM categories c
+	JOIN kw ON c.kw_id = kw.id
+	JOIN search_phrases sp ON kw.normquery = sp.kw
+	WHERE c.filter_id = $1
+	ORDER BY relevance_ratio DESC,sp.freq DESC LIMIT $2 OFFSET $3
 `
 
-	rows, err := s.client.Query(ctx, query, filterID)
+	rows, err := s.client.Query(ctx, query, filterID, limit, offset)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query for filter ID %d: %w", filterID, err)
 	}
 	defer rows.Close()
-
 	resp := &pb.GetKeywordsByFilterResp{}
 	for rows.Next() {
 		var relevanceRatio int64

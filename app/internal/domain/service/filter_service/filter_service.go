@@ -15,7 +15,7 @@ import (
 type FilterDataProvider interface {
 	GetDistinctNames(ctx context.Context, filterName string) ([]string, error)
 	GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error)
-	GetKeywordsByFilter(ctx context.Context, filterID int64) (*pb.GetKeywordsByFilterResp, error)
+	GetKeywordsByFilter(ctx context.Context, filterID int64, limit int, offset int) (*pb.GetKeywordsByFilterResp, error)
 }
 type TokenManager interface {
 	Verify(accessToken string) (*uint64, error)
@@ -154,7 +154,7 @@ func (service *FilterService) GetKeywordsByFilter(ctx context.Context, req *pb.G
 	}
 
 	// Fetch keywords by filter
-	keywordsResp, err := service.filterDataProvider.GetKeywordsByFilter(ctx, req.FilterID)
+	keywordsResp, err := service.filterDataProvider.GetKeywordsByFilter(ctx, req.FilterID, int(req.Limit), int(req.Offset))
 	if err != nil {
 		service.logger.Error("could not get keywords by filter (userID: %d): %v", userID, err)
 		return nil, status.Errorf(codes.Internal, "could not get keywords by filter: %v", err)
