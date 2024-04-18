@@ -9,7 +9,7 @@ import "filter_message.proto";
 service FilterService {
     rpc GetFilterValues(GetFilterValuesReq) returns (GetFilterValuesResp);
     rpc GetSearchQuery(GetSearchQueryReq) returns (GetSearchQueryResp);
-    rpc GetKeywordsByFilter(GetKeywordsByFilterReq) returns (GetKeywordsByFilterResp);
+    rpc GetLemmasByFilterID(GetLemmasByFilterIDReq) returns (GetLemmasByFilterIDResp);
 }
 
 

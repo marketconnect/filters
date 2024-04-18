@@ -15,7 +15,7 @@ import (
 type FilterDataProvider interface {
 	GetDistinctNames(ctx context.Context, filterName string) ([]string, error)
 	GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error)
-	GetKeywordsByFilter(ctx context.Context, filterID int64, limit int, offset int) (*pb.GetKeywordsByFilterResp, error)
+	GetLemmasByFilterID(ctx context.Context, filterID int64) ([]*pb.LemmaByFilter, error)
 }
 type TokenManager interface {
 	Verify(accessToken string) (*uint64, error)
@@ -123,7 +123,7 @@ func (service *FilterService) GetSearchQuery(ctx context.Context, req *pb.GetSea
 	}, nil
 }
 
-func (service *FilterService) GetKeywordsByFilter(ctx context.Context, req *pb.GetKeywordsByFilterReq) (*pb.GetKeywordsByFilterResp, error) {
+func (service *FilterService) GetLemmasByFilterID(ctx context.Context, req *pb.GetLemmasByFilterIDReq) (*pb.GetLemmasByFilterIDResp, error) {
 	md, ok := metadata.FromIncomingContext(ctx)
 	if !ok {
 		service.logger.Error("metadata is not provided")
@@ -153,12 +153,10 @@ func (service *FilterService) GetKeywordsByFilter(ctx context.Context, req *pb.G
 		return nil, status.Error(codes.InvalidArgument, "Filter ID is required")
 	}
 
-	// Fetch keywords by filter
-	keywordsResp, err := service.filterDataProvider.GetKeywordsByFilter(ctx, req.FilterID, int(req.Limit), int(req.Offset))
+	lemmas, err := service.filterDataProvider.GetLemmasByFilterID(ctx, req.FilterID)
 	if err != nil {
-		service.logger.Error("could not get keywords by filter (userID: %d): %v", userID, err)
-		return nil, status.Errorf(codes.Internal, "could not get keywords by filter: %v", err)
+		service.logger.Error("could not get lemmas: %v", err)
+		return nil, status.Errorf(codes.Internal, "could not get lemmas: %v", err)
 	}
-
-	return keywordsResp, nil
+	return &pb.GetLemmasByFilterIDResp{Lemmas: lemmas}, nil
 }

@@ -4,12 +4,12 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"strings"
 	"time"
 
 	pb "filters/app/gen/proto"
 
-	"github.com/go-redis/redis/v8"
+	redis "github.com/go-redis/redis/v8"
+
 	client "github.com/marketconnect/db_client/postgresql"
 )
 
@@ -110,94 +110,17 @@ func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([
 	return frequencies, nil
 }
 
-func (s *filterStorage) GetKeywordsByLemmas(ctx context.Context, lemmas []string, limit int, offset int) (*pb.GetKeywordsByFilterResp, error) {
-	// Prepare the array of lemmas as a PostgreSQL ARRAY constructor
-	lemmaArray := "ARRAY[" + strings.Join(lemmas, ",") + "]"
-
+func (s *filterStorage) GetLemmasByFilterID(ctx context.Context, filterID int64) ([]*pb.LemmaByFilter, error) {
 	query := `
-    SELECT k.normquery, k.name, k.cards_qty
-    FROM kw k
-    JOIN kw_lemmas kl ON k.id = kl.kw_id
-    JOIN lemmas l ON kl.lemma_id = l.id
-    WHERE l.lemma = ANY($1)
-    ORDER BY k.id
-    LIMIT $2 OFFSET $3;
-    `
-
-	rows, err := s.client.Query(ctx, query, lemmaArray, limit, offset)
-	if err != nil {
-		return nil, fmt.Errorf("failed to execute query with lemmas: %w", err)
-	}
-	defer rows.Close()
-
-	resp := &pb.GetKeywordsByFilterResp{}
-	for rows.Next() {
-		var keyword pb.KeywordByFilter
-		err := rows.Scan(&keyword.Normquery, &keyword.Competition, &keyword.Count) // Updated to match the fields being selected
-		if err != nil {
-			return nil, fmt.Errorf("failed to scan row: %w", err)
-		}
-		// Assume pb.KeywordByFilter has been adjusted to include a 'Name' field if it wasn't already there.
-		resp.Keywords = append(resp.Keywords, &keyword)
-	}
-
-	if err = rows.Err(); err != nil {
-		return nil, fmt.Errorf("error iterating rows: %w", err)
-	}
-
-	return resp, nil
-}
-
-// func (s *filterStorage) GetKeywordsByFilter(ctx context.Context, filterID int64, limit int, offset int) (*pb.GetKeywordsByFilterResp, error) {
-// 	query := `
-// 	SELECT DISTINCT
-//     kw.normquery,
-//     sp.freq AS frequency,
-//     kw.cards_qty AS competition,
-//     c.count,
-//     CASE
-//         WHEN kw.cards_qty = 0 THEN 0
-//         ELSE c.count::FLOAT / kw.cards_qty
-//     END AS relevance_ratio
-// 	FROM categories c
-// 	JOIN kw ON c.kw_id = kw.id
-// 	JOIN search_phrases sp ON kw.normquery = sp.kw
-// 	WHERE c.filter_id = $1
-// 	ORDER BY relevance_ratio DESC,sp.freq DESC LIMIT $2 OFFSET $3
-// `
-
-// 	rows, err := s.client.Query(ctx, query, filterID, limit, offset)
-// 	if err != nil {
-// 		return nil, fmt.Errorf("failed to execute query for filter ID %d: %w", filterID, err)
-// 	}
-// 	defer rows.Close()
-// 	resp := &pb.GetKeywordsByFilterResp{}
-// 	for rows.Next() {
-// 		var relevanceRatio float64
-// 		var keyword pb.KeywordByFilter
-// 		err := rows.Scan(&keyword.Normquery, &keyword.Frequency, &keyword.Competition, &keyword.Count, &relevanceRatio)
-// 		if err != nil {
-// 			return nil, fmt.Errorf("failed to scan row: %w", err)
-// 		}
-// 		resp.Keywords = append(resp.Keywords, &keyword)
-// 	}
-
-// 	if err = rows.Err(); err != nil {
-// 		return nil, fmt.Errorf("error iterating rows: %w", err)
-// 	}
-
-// 	return resp, nil
-// }
-
-func (s *filterStorage) GetLemmasByFilterID(ctx context.Context, filterID int64) ([]string, error) {
-	query := `
-    SELECT DISTINCT l.lemma
-    FROM categories c
-    JOIN kw k ON c.kw_id = k.id
-    JOIN kw_lemmas kl ON k.id = kl.kw_id
-    JOIN lemmas l ON kl.lemma_id = l.id
-    WHERE c.filter_id = $1
-    ORDER BY l.lemma;
+	SELECT l.lemma, SUM(sp.freq) AS total_frequency
+	FROM categories c
+	JOIN kw ON c.kw_id = kw.id
+	JOIN kw_lemmas kl ON kw.id = kl.kw_id
+	JOIN lemmas l ON kl.lemma_id = l.id
+	JOIN search_phrases sp ON kw.normquery = sp.kw
+	WHERE c.filter_id = $1
+	GROUP BY l.lemma
+	ORDER BY total_frequency DESC;
     `
 
 	rows, err := s.client.Query(ctx, query, filterID)
@@ -206,13 +129,13 @@ func (s *filterStorage) GetLemmasByFilterID(ctx context.Context, filterID int64)
 	}
 	defer rows.Close()
 
-	var lemmas []string
+	var lemmas []*pb.LemmaByFilter
 	for rows.Next() {
-		var lemma string
-		if err := rows.Scan(&lemma); err != nil {
+		var lemma pb.LemmaByFilter
+		if err := rows.Scan(&lemma.Lemma, &lemma.TotalFrequency); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
-		lemmas = append(lemmas, lemma)
+		lemmas = append(lemmas, &lemma)
 	}
 
 	if err = rows.Err(); err != nil {

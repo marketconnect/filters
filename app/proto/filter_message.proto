@@ -27,19 +27,17 @@ message GetSearchQueryResp {
 
 
 // keywords by filter
-message GetKeywordsByFilterReq {
+message GetLemmasByFilterIDReq {
     int64 filterID = 1;
     int32 limit    = 2; 
     int32 offset   = 3;
 }
 
-message KeywordByFilter {
-    string normquery  = 1;
-    int32 frequency   = 2;
-    int32 competition = 3; 
-    int32 count       = 4; 
+message LemmaByFilter {
+    string lemma  = 1;
+    int32 totalFrequency   = 2;
 }
 
-message GetKeywordsByFilterResp {
-    repeated KeywordByFilter keywords = 1;
+message GetLemmasByFilterIDResp {
+    repeated LemmaByFilter lemmas = 1;
 }

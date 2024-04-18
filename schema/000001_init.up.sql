@@ -51,6 +51,8 @@ GRANT ALL PRIVILEGES ON TABLE public.filters TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.kw TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.categories TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.search_phrases TO test_user;
+GRANT ALL PRIVILEGES ON TABLE public.kw_lemmas TO test_user;
+GRANT ALL PRIVILEGES ON TABLE public.lemmas TO test_user;
 GRANT ALL ON SEQUENCE public.filters_id_seq TO test_user;
 GRANT ALL ON SEQUENCE public.kw_id_seq TO test_user;
 GRANT ALL ON SEQUENCE public.categories_id_seq TO test_user;

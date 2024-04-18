@@ -211,7 +211,7 @@ func (x *GetSearchQueryResp) GetFrequencies() []int32 {
 }
 
 // keywords by filter
-type GetKeywordsByFilterReq struct {
+type GetLemmasByFilterIDReq struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -221,8 +221,8 @@ type GetKeywordsByFilterReq struct {
 	Offset   int32 `protobuf:"varint,3,opt,name=offset,proto3" json:"offset,omitempty"`
 }
 
-func (x *GetKeywordsByFilterReq) Reset() {
-	*x = GetKeywordsByFilterReq{}
+func (x *GetLemmasByFilterIDReq) Reset() {
+	*x = GetLemmasByFilterIDReq{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_filter_message_proto_msgTypes[4]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -230,13 +230,13 @@ func (x *GetKeywordsByFilterReq) Reset() {
 	}
 }
 
-func (x *GetKeywordsByFilterReq) String() string {
+func (x *GetLemmasByFilterIDReq) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetKeywordsByFilterReq) ProtoMessage() {}
+func (*GetLemmasByFilterIDReq) ProtoMessage() {}
 
-func (x *GetKeywordsByFilterReq) ProtoReflect() protoreflect.Message {
+func (x *GetLemmasByFilterIDReq) ProtoReflect() protoreflect.Message {
 	mi := &file_filter_message_proto_msgTypes[4]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -248,45 +248,43 @@ func (x *GetKeywordsByFilterReq) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetKeywordsByFilterReq.ProtoReflect.Descriptor instead.
-func (*GetKeywordsByFilterReq) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetLemmasByFilterIDReq.ProtoReflect.Descriptor instead.
+func (*GetLemmasByFilterIDReq) Descriptor() ([]byte, []int) {
 	return file_filter_message_proto_rawDescGZIP(), []int{4}
 }
 
-func (x *GetKeywordsByFilterReq) GetFilterID() int64 {
+func (x *GetLemmasByFilterIDReq) GetFilterID() int64 {
 	if x != nil {
 		return x.FilterID
 	}
 	return 0
 }
 
-func (x *GetKeywordsByFilterReq) GetLimit() int32 {
+func (x *GetLemmasByFilterIDReq) GetLimit() int32 {
 	if x != nil {
 		return x.Limit
 	}
 	return 0
 }
 
-func (x *GetKeywordsByFilterReq) GetOffset() int32 {
+func (x *GetLemmasByFilterIDReq) GetOffset() int32 {
 	if x != nil {
 		return x.Offset
 	}
 	return 0
 }
 
-type KeywordByFilter struct {
+type LemmaByFilter struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Normquery   string `protobuf:"bytes,1,opt,name=normquery,proto3" json:"normquery,omitempty"`
-	Frequency   int32  `protobuf:"varint,2,opt,name=frequency,proto3" json:"frequency,omitempty"`
-	Competition int32  `protobuf:"varint,3,opt,name=competition,proto3" json:"competition,omitempty"`
-	Count       int32  `protobuf:"varint,4,opt,name=count,proto3" json:"count,omitempty"`
+	Lemma          string `protobuf:"bytes,1,opt,name=lemma,proto3" json:"lemma,omitempty"`
+	TotalFrequency int32  `protobuf:"varint,2,opt,name=totalFrequency,proto3" json:"totalFrequency,omitempty"`
 }
 
-func (x *KeywordByFilter) Reset() {
-	*x = KeywordByFilter{}
+func (x *LemmaByFilter) Reset() {
+	*x = LemmaByFilter{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_filter_message_proto_msgTypes[5]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -294,13 +292,13 @@ func (x *KeywordByFilter) Reset() {
 	}
 }
 
-func (x *KeywordByFilter) String() string {
+func (x *LemmaByFilter) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*KeywordByFilter) ProtoMessage() {}
+func (*LemmaByFilter) ProtoMessage() {}
 
-func (x *KeywordByFilter) ProtoReflect() protoreflect.Message {
+func (x *LemmaByFilter) ProtoReflect() protoreflect.Message {
 	mi := &file_filter_message_proto_msgTypes[5]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -312,49 +310,35 @@ func (x *KeywordByFilter) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use KeywordByFilter.ProtoReflect.Descriptor instead.
-func (*KeywordByFilter) Descriptor() ([]byte, []int) {
+// Deprecated: Use LemmaByFilter.ProtoReflect.Descriptor instead.
+func (*LemmaByFilter) Descriptor() ([]byte, []int) {
 	return file_filter_message_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *KeywordByFilter) GetNormquery() string {
+func (x *LemmaByFilter) GetLemma() string {
 	if x != nil {
-		return x.Normquery
+		return x.Lemma
 	}
 	return ""
 }
 
-func (x *KeywordByFilter) GetFrequency() int32 {
+func (x *LemmaByFilter) GetTotalFrequency() int32 {
 	if x != nil {
-		return x.Frequency
+		return x.TotalFrequency
 	}
 	return 0
 }
 
-func (x *KeywordByFilter) GetCompetition() int32 {
-	if x != nil {
-		return x.Competition
-	}
-	return 0
-}
-
-func (x *KeywordByFilter) GetCount() int32 {
-	if x != nil {
-		return x.Count
-	}
-	return 0
-}
-
-type GetKeywordsByFilterResp struct {
+type GetLemmasByFilterIDResp struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Keywords []*KeywordByFilter `protobuf:"bytes,1,rep,name=keywords,proto3" json:"keywords,omitempty"`
+	Lemmas []*LemmaByFilter `protobuf:"bytes,1,rep,name=lemmas,proto3" json:"lemmas,omitempty"`
 }
 
-func (x *GetKeywordsByFilterResp) Reset() {
-	*x = GetKeywordsByFilterResp{}
+func (x *GetLemmasByFilterIDResp) Reset() {
+	*x = GetLemmasByFilterIDResp{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_filter_message_proto_msgTypes[6]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -362,13 +346,13 @@ func (x *GetKeywordsByFilterResp) Reset() {
 	}
 }
 
-func (x *GetKeywordsByFilterResp) String() string {
+func (x *GetLemmasByFilterIDResp) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetKeywordsByFilterResp) ProtoMessage() {}
+func (*GetLemmasByFilterIDResp) ProtoMessage() {}
 
-func (x *GetKeywordsByFilterResp) ProtoReflect() protoreflect.Message {
+func (x *GetLemmasByFilterIDResp) ProtoReflect() protoreflect.Message {
 	mi := &file_filter_message_proto_msgTypes[6]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -380,14 +364,14 @@ func (x *GetKeywordsByFilterResp) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetKeywordsByFilterResp.ProtoReflect.Descriptor instead.
-func (*GetKeywordsByFilterResp) Descriptor() ([]byte, []int) {
+// Deprecated: Use GetLemmasByFilterIDResp.ProtoReflect.Descriptor instead.
+func (*GetLemmasByFilterIDResp) Descriptor() ([]byte, []int) {
 	return file_filter_message_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetKeywordsByFilterResp) GetKeywords() []*KeywordByFilter {
+func (x *GetLemmasByFilterIDResp) GetLemmas() []*LemmaByFilter {
 	if x != nil {
-		return x.Keywords
+		return x.Lemmas
 	}
 	return nil
 }
@@ -409,28 +393,24 @@ var file_filter_message_proto_rawDesc = []byte{
 	0x22, 0x36, 0x0a, 0x12, 0x47, 0x65, 0x74, 0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x51, 0x75, 0x65,
 	0x72, 0x79, 0x52, 0x65, 0x73, 0x70, 0x12, 0x20, 0x0a, 0x0b, 0x66, 0x72, 0x65, 0x71, 0x75, 0x65,
 	0x6e, 0x63, 0x69, 0x65, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x05, 0x52, 0x0b, 0x66, 0x72, 0x65,
-	0x71, 0x75, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x22, 0x62, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x4b,
-	0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52,
+	0x71, 0x75, 0x65, 0x6e, 0x63, 0x69, 0x65, 0x73, 0x22, 0x62, 0x0a, 0x16, 0x47, 0x65, 0x74, 0x4c,
+	0x65, 0x6d, 0x6d, 0x61, 0x73, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x49, 0x44, 0x52,
 	0x65, 0x71, 0x12, 0x1a, 0x0a, 0x08, 0x66, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x49, 0x44, 0x18, 0x01,
 	0x20, 0x01, 0x28, 0x03, 0x52, 0x08, 0x66, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x49, 0x44, 0x12, 0x14,
 	0x0a, 0x05, 0x6c, 0x69, 0x6d, 0x69, 0x74, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x6c,
 	0x69, 0x6d, 0x69, 0x74, 0x12, 0x16, 0x0a, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x18, 0x03,
-	0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0x85, 0x01, 0x0a,
-	0x0f, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72,
-	0x12, 0x1c, 0x0a, 0x09, 0x6e, 0x6f, 0x72, 0x6d, 0x71, 0x75, 0x65, 0x72, 0x79, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x09, 0x6e, 0x6f, 0x72, 0x6d, 0x71, 0x75, 0x65, 0x72, 0x79, 0x12, 0x1c,
-	0x0a, 0x09, 0x66, 0x72, 0x65, 0x71, 0x75, 0x65, 0x6e, 0x63, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28,
-	0x05, 0x52, 0x09, 0x66, 0x72, 0x65, 0x71, 0x75, 0x65, 0x6e, 0x63, 0x79, 0x12, 0x20, 0x0a, 0x0b,
-	0x63, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x03, 0x20, 0x01, 0x28,
-	0x05, 0x52, 0x0b, 0x63, 0x6f, 0x6d, 0x70, 0x65, 0x74, 0x69, 0x74, 0x69, 0x6f, 0x6e, 0x12, 0x14,
-	0x0a, 0x05, 0x63, 0x6f, 0x75, 0x6e, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28, 0x05, 0x52, 0x05, 0x63,
-	0x6f, 0x75, 0x6e, 0x74, 0x22, 0x4c, 0x0a, 0x17, 0x47, 0x65, 0x74, 0x4b, 0x65, 0x79, 0x77, 0x6f,
-	0x72, 0x64, 0x73, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x65, 0x73, 0x70, 0x12,
-	0x31, 0x0a, 0x08, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28,
-	0x0b, 0x32, 0x15, 0x2e, 0x6d, 0x61, 0x69, 0x6e, 0x2e, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64,
-	0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x08, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72,
-	0x64, 0x73, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x20, 0x01, 0x28, 0x05, 0x52, 0x06, 0x6f, 0x66, 0x66, 0x73, 0x65, 0x74, 0x22, 0x4d, 0x0a, 0x0d,
+	0x4c, 0x65, 0x6d, 0x6d, 0x61, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x12, 0x14, 0x0a,
+	0x05, 0x6c, 0x65, 0x6d, 0x6d, 0x61, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x6c, 0x65,
+	0x6d, 0x6d, 0x61, 0x12, 0x26, 0x0a, 0x0e, 0x74, 0x6f, 0x74, 0x61, 0x6c, 0x46, 0x72, 0x65, 0x71,
+	0x75, 0x65, 0x6e, 0x63, 0x79, 0x18, 0x02, 0x20, 0x01, 0x28, 0x05, 0x52, 0x0e, 0x74, 0x6f, 0x74,
+	0x61, 0x6c, 0x46, 0x72, 0x65, 0x71, 0x75, 0x65, 0x6e, 0x63, 0x79, 0x22, 0x46, 0x0a, 0x17, 0x47,
+	0x65, 0x74, 0x4c, 0x65, 0x6d, 0x6d, 0x61, 0x73, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72,
+	0x49, 0x44, 0x52, 0x65, 0x73, 0x70, 0x12, 0x2b, 0x0a, 0x06, 0x6c, 0x65, 0x6d, 0x6d, 0x61, 0x73,
+	0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x13, 0x2e, 0x6d, 0x61, 0x69, 0x6e, 0x2e, 0x4c, 0x65,
+	0x6d, 0x6d, 0x61, 0x42, 0x79, 0x46, 0x69, 0x6c, 0x74, 0x65, 0x72, 0x52, 0x06, 0x6c, 0x65, 0x6d,
+	0x6d, 0x61, 0x73, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06,
+	0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -451,12 +431,12 @@ var file_filter_message_proto_goTypes = []interface{}{
 	(*GetFilterValuesResp)(nil),     // 1: main.GetFilterValuesResp
 	(*GetSearchQueryReq)(nil),       // 2: main.GetSearchQueryReq
 	(*GetSearchQueryResp)(nil),      // 3: main.GetSearchQueryResp
-	(*GetKeywordsByFilterReq)(nil),  // 4: main.GetKeywordsByFilterReq
-	(*KeywordByFilter)(nil),         // 5: main.KeywordByFilter
-	(*GetKeywordsByFilterResp)(nil), // 6: main.GetKeywordsByFilterResp
+	(*GetLemmasByFilterIDReq)(nil),  // 4: main.GetLemmasByFilterIDReq
+	(*LemmaByFilter)(nil),           // 5: main.LemmaByFilter
+	(*GetLemmasByFilterIDResp)(nil), // 6: main.GetLemmasByFilterIDResp
 }
 var file_filter_message_proto_depIdxs = []int32{
-	5, // 0: main.GetKeywordsByFilterResp.keywords:type_name -> main.KeywordByFilter
+	5, // 0: main.GetLemmasByFilterIDResp.lemmas:type_name -> main.LemmaByFilter
 	1, // [1:1] is the sub-list for method output_type
 	1, // [1:1] is the sub-list for method input_type
 	1, // [1:1] is the sub-list for extension type_name
@@ -519,7 +499,7 @@ func file_filter_message_proto_init() {
 			}
 		}
 		file_filter_message_proto_msgTypes[4].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetKeywordsByFilterReq); i {
+			switch v := v.(*GetLemmasByFilterIDReq); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -531,7 +511,7 @@ func file_filter_message_proto_init() {
 			}
 		}
 		file_filter_message_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*KeywordByFilter); i {
+			switch v := v.(*LemmaByFilter); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -543,7 +523,7 @@ func file_filter_message_proto_init() {
 			}
 		}
 		file_filter_message_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetKeywordsByFilterResp); i {
+			switch v := v.(*GetLemmasByFilterIDResp); i {
 			case 0:
 				return &v.state
 			case 1:
