@@ -2,63 +2,63 @@ package filter_service_test
 
 import (
 	"context"
-	pb "filters/app/gen/proto"
+	"fmt"
+	"log"
+	"time"
 
 	"testing"
 
+	pb "filters/app/gen/proto"
 	filter_service "filters/app/internal/domain/service/filter_service"
 
 	"github.com/stretchr/testify/assert"
-
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapcore"
 	"google.golang.org/grpc/metadata"
 )
 
-// FakeFilterDataProvider simulates the filter data provider.
+// Setup a basic logger for testing
+
+func getLogger() *zap.SugaredLogger {
+	loggerConfig := zap.NewProductionConfig()
+	loggerConfig.EncoderConfig.TimeKey = "timestamp"
+	loggerConfig.EncoderConfig.EncodeTime = zapcore.TimeEncoderOfLayout(time.RFC3339)
+
+	logger, err := loggerConfig.Build()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	return logger.Sugar()
+}
+
 type FakeFilterDataProvider struct{}
 
 func (f *FakeFilterDataProvider) GetDistinctNames(ctx context.Context, filterName string) ([]string, error) {
-	// Simulate retrieving a list of filter names.
 	return []string{"FilterValue1", "FilterValue2"}, nil
 }
 
 func (f *FakeFilterDataProvider) GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error) {
-	// Simulate retrieving frequencies for the provided phrases.
-	// The frequencies here are arbitrary and should match your test cases.
 	return []uint32{5, 10}, nil
 }
 
-func (f *FakeFilterDataProvider) GetKeywordsByFilter(ctx context.Context, filterID int64, limit int, offset int) (*pb.GetKeywordsByFilterResp, error) {
+func (f *FakeFilterDataProvider) GetLemmasByFilterID(ctx context.Context, filterID int64) ([]*pb.LemmaByFilter, error) {
 	if filterID == 1 {
-		return &pb.GetKeywordsByFilterResp{
-			Keywords: []*pb.KeywordByFilter{
-				{
-					Normquery:   "keyword1",
-					Frequency:   10,
-					Competition: 9,
-					Count:       100,
-				},
-				{
-					Normquery:   "keyword2",
-					Frequency:   20,
-					Competition: 8,
-					Count:       200,
-				},
-			},
+		return []*pb.LemmaByFilter{
+			{Lemma: "lemma1", TotalFrequency: 50},
+			{Lemma: "lemma2", TotalFrequency: 30},
 		}, nil
 	}
-	return nil, nil // Return nil for other IDs for simplicity
+	return nil, fmt.Errorf("no lemmas found for filter ID %d", filterID)
 }
 
-// FakeTokenManager simulates the token manager.
 type FakeTokenManager struct{}
 
 func (f *FakeTokenManager) Verify(accessToken string) (*uint64, error) {
-	// Simulate successful token verification.
 	userID := uint64(123)
 	return &userID, nil
 }
 
-// createContextWithMetadata creates a context with metadata simulating an incoming request with an authorization token.
 func createContextWithMetadata(token string) context.Context {
 	md := metadata.New(map[string]string{"authorization": token})
 	return metadata.NewIncomingContext(context.Background(), md)
@@ -67,72 +67,41 @@ func createContextWithMetadata(token string) context.Context {
 func TestGetFilterValues(t *testing.T) {
 	ctx := createContextWithMetadata("validToken")
 
-	service := filter_service.NewFilterService(
-		&FakeFilterDataProvider{},
-		&FakeTokenManager{},
-		nil, // Assuming logger is not critical for the test. Use a real logger if needed.
-	)
-
-	req := &pb.GetFilterValuesReq{
-		FilterName: "exampleFilter",
-	}
-
+	service := filter_service.NewFilterService(&FakeFilterDataProvider{}, &FakeTokenManager{}, getLogger())
+	req := &pb.GetFilterValuesReq{FilterName: "exampleFilter"}
 	resp, err := service.GetFilterValues(ctx, req)
-
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
-	assert.Len(t, resp.Values, 2) // Assuming the FakeFilterDataProvider returns 2 filter values
+	assert.Len(t, resp.Values, 2)
 }
 
 func TestGetSearchQuery(t *testing.T) {
 	ctx := createContextWithMetadata("validToken")
-
-	service := filter_service.NewFilterService(
-		&FakeFilterDataProvider{},
-		&FakeTokenManager{},
-		nil, // Assuming logger is not critical for the test. Use a real logger if needed.
-	)
-
-	req := &pb.GetSearchQueryReq{
-		Queries: []string{"query1", "query2"},
-	}
-
+	service := filter_service.NewFilterService(&FakeFilterDataProvider{}, &FakeTokenManager{}, getLogger())
+	req := &pb.GetSearchQueryReq{Queries: []string{"query1", "query2"}}
 	resp, err := service.GetSearchQuery(ctx, req)
-
 	assert.NoError(t, err)
 	assert.NotNil(t, resp)
-	// The expected frequencies should match what's defined in FakeSearchPhraseDataProvider.GetFrequencies
-	expectedFrequencies := []int32{5, 10}
-	assert.Equal(t, expectedFrequencies, resp.Frequencies)
+	assert.Equal(t, []int32{5, 10}, resp.Frequencies)
 }
 
-func TestGetKeywordsByFilter(t *testing.T) {
+func TestGetLemmasByFilterID(t *testing.T) {
 	ctx := createContextWithMetadata("validToken")
+	service := filter_service.NewFilterService(&FakeFilterDataProvider{}, &FakeTokenManager{}, getLogger())
 
-	service := filter_service.NewFilterService(
-		&FakeFilterDataProvider{},
-		&FakeTokenManager{},
-		nil, // Logger is not critical for this test. Implement if needed.
-	)
+	validReq := &pb.GetLemmasByFilterIDReq{FilterID: 1}
+	invalidReq := &pb.GetLemmasByFilterIDReq{FilterID: 999}
 
-	req := &pb.GetKeywordsByFilterReq{
-		FilterID: 1, // Use a filter ID that matches the one used in the mock
-	}
+	validResp, validErr := service.GetLemmasByFilterID(ctx, validReq)
+	assert.NoError(t, validErr)
+	assert.NotNil(t, validResp)
+	assert.Len(t, validResp.Lemmas, 2)
+	assert.Equal(t, "lemma1", validResp.Lemmas[0].Lemma)
+	assert.Equal(t, int32(50), validResp.Lemmas[0].TotalFrequency)
+	assert.Equal(t, "lemma2", validResp.Lemmas[1].Lemma)
+	assert.Equal(t, int32(30), validResp.Lemmas[1].TotalFrequency)
 
-	resp, err := service.GetKeywordsByFilter(ctx, req)
-
-	assert.NoError(t, err)
-	assert.NotNil(t, resp)
-	assert.Len(t, resp.Keywords, 2) // Check if the response contains the correct number of keywords
-
-	// Detailed checks on the response content
-	assert.Equal(t, "keyword1", resp.Keywords[0].Normquery)
-	assert.Equal(t, int32(10), resp.Keywords[0].Frequency)
-	assert.Equal(t, int32(9), resp.Keywords[0].Competition)
-	assert.Equal(t, int32(100), resp.Keywords[0].Count)
-
-	assert.Equal(t, "keyword2", resp.Keywords[1].Normquery)
-	assert.Equal(t, int32(20), resp.Keywords[1].Frequency)
-	assert.Equal(t, int32(8), resp.Keywords[1].Competition)
-	assert.Equal(t, int32(200), resp.Keywords[1].Count)
+	invalidResp, invalidErr := service.GetLemmasByFilterID(ctx, invalidReq)
+	assert.Error(t, invalidErr)
+	assert.Nil(t, invalidResp, "Response should be nil when an error occurs")
 }

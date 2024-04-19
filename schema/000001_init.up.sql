@@ -13,7 +13,7 @@ CREATE TABLE public.search_phrases (
     freq INTEGER NOT NULL DEFAULT 0
 );
 
-CREATE INDEX idx_search_phrases_phrase ON search_phrases(phrase);
+CREATE INDEX idx_search_phrases_kw ON search_phrases(kw);
 
 CREATE TABLE kw (
     id SERIAL PRIMARY KEY,        
@@ -21,14 +21,17 @@ CREATE TABLE kw (
     normquery TEXT NOT NULL,     
     cards_qty INTEGER NOT NULL   
 );
+CREATE INDEX idx_kw_on_normquery ON kw (normquery);
 
 CREATE TABLE categories (
-    id SERIAL PRIMARY KEY,         
-    kw_id INTEGER NOT NULL,        
-    filter_id INTEGER NOT NULL,    
-    count INTEGER NOT NULL,        
+    id SERIAL PRIMARY KEY,
+    kw_id INTEGER NOT NULL,
+    filter_id INTEGER NOT NULL,
+    count INTEGER NOT NULL,    
     FOREIGN KEY (kw_id) REFERENCES kw (id)   
 );
+CREATE INDEX idx_categories_on_kw_id ON categories (kw_id);
+CREATE INDEX idx_categories_on_filter_id ON categories (filter_id);
 
 
 CREATE TABLE lemmas (
