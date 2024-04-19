@@ -32,6 +32,8 @@ CREATE TABLE categories (
     count INTEGER NOT NULL,    
     FOREIGN KEY (kw_id) REFERENCES kw (id)   
 );
+
+
 CREATE INDEX idx_categories_on_kw_id ON categories (kw_id);
 CREATE INDEX idx_categories_on_filter_id ON categories (filter_id);
 
