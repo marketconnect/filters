@@ -52,6 +52,24 @@ func (f *FakeFilterDataProvider) GetLemmasByFilterID(ctx context.Context, filter
 	return nil, fmt.Errorf("no lemmas found for filter ID %d", filterID)
 }
 
+func (f *FakeFilterDataProvider) GetKeywordsByLemmas(ctx context.Context, req *pb.GetKeywordsByLemmasReq) (*pb.GetKeywordsByLemmasResp, error) {
+	if len(req.LemmasIDs) > 0 {
+		keywords := make([]*pb.KeywordByLemma, 0)
+		for _, id := range req.LemmasIDs {
+			// Simulate response based on lemma ID
+			keyword := &pb.KeywordByLemma{
+				LemmaID: int32(id),
+				Lemma:   fmt.Sprintf("lemma%d", id),
+				Keyword: fmt.Sprintf("keyword for lemma%d", id),
+				Freq:    int32(100 * id), // Arbitrary frequency calculation
+			}
+			keywords = append(keywords, keyword)
+		}
+		return &pb.GetKeywordsByLemmasResp{Keywords: keywords}, nil
+	}
+	return nil, fmt.Errorf("no keywords found for given lemmas")
+}
+
 type FakeTokenManager struct{}
 
 func (f *FakeTokenManager) Verify(accessToken string) (*uint64, error) {
@@ -104,4 +122,28 @@ func TestGetLemmasByFilterID(t *testing.T) {
 	invalidResp, invalidErr := service.GetLemmasByFilterID(ctx, invalidReq)
 	assert.Error(t, invalidErr)
 	assert.Nil(t, invalidResp, "Response should be nil when an error occurs")
+}
+
+func TestGetKeywordsByLemmas(t *testing.T) {
+	ctx := createContextWithMetadata("validToken")
+
+	service := filter_service.NewFilterService(&FakeFilterDataProvider{}, &FakeTokenManager{}, getLogger())
+
+	req := &pb.GetKeywordsByLemmasReq{
+		LemmasIDs: []int64{1, 2}, // Assuming these lemma IDs will be handled by your FakeFilterDataProvider
+		Limit:     10,
+		Offset:    0,
+	}
+
+	resp, err := service.GetKeywordsByLemmas(ctx, req)
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Len(t, resp.Keywords, 2, "Should return two keywords for the given lemmas")
+
+	// Check if the keywords are correct
+	expected := []*pb.KeywordByLemma{
+		{LemmaID: 1, Lemma: "lemma1", Keyword: "keyword for lemma1", Freq: 100},
+		{LemmaID: 2, Lemma: "lemma2", Keyword: "keyword for lemma2", Freq: 200},
+	}
+	assert.Equal(t, expected, resp.Keywords, "Expected keywords do not match the actual data")
 }
