@@ -4,6 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
+
 	"time"
 
 	pb "filters/app/gen/proto"
@@ -112,15 +115,19 @@ func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([
 
 func (s *filterStorage) GetLemmasByFilterID(ctx context.Context, filterID int64) ([]*pb.LemmaByFilter, error) {
 	query := `
-	SELECT l.lemma, SUM(sp.freq) AS total_frequency
+	SELECT 
+    l.id AS lemma_id,
+    l.lemma,
+    SUM(sp.freq) AS total_frequency
 	FROM categories c
 	JOIN kw ON c.kw_id = kw.id
 	JOIN kw_lemmas kl ON kw.id = kl.kw_id
 	JOIN lemmas l ON kl.lemma_id = l.id
 	JOIN search_phrases sp ON kw.normquery = sp.kw
 	WHERE c.filter_id = $1
-	GROUP BY l.lemma
+	GROUP BY l.id, l.lemma
 	ORDER BY total_frequency DESC;
+
     `
 
 	rows, err := s.client.Query(ctx, query, filterID)
@@ -132,7 +139,7 @@ func (s *filterStorage) GetLemmasByFilterID(ctx context.Context, filterID int64)
 	var lemmas []*pb.LemmaByFilter
 	for rows.Next() {
 		var lemma pb.LemmaByFilter
-		if err := rows.Scan(&lemma.Lemma, &lemma.TotalFrequency); err != nil {
+		if err := rows.Scan(&lemma.LemmaID, &lemma.Lemma, &lemma.TotalFrequency); err != nil {
 			return nil, fmt.Errorf("failed to scan row: %w", err)
 		}
 		lemmas = append(lemmas, &lemma)
@@ -143,4 +150,50 @@ func (s *filterStorage) GetLemmasByFilterID(ctx context.Context, filterID int64)
 	}
 
 	return lemmas, nil
+}
+
+func (s *filterStorage) GetKeywordsByLemmas(ctx context.Context, req *pb.GetKeywordsByLemmasReq) (*pb.GetKeywordsByLemmasResp, error) {
+	// Converting lemmasIDs from []int64 to a string suitable for IN clause
+	lemmaIDs := make([]string, len(req.LemmasIDs))
+	for i, id := range req.LemmasIDs {
+		lemmaIDs[i] = strconv.FormatInt(id, 10)
+	}
+	lemmaArray := strings.Join(lemmaIDs, ",")
+
+	query := `
+    SELECT 
+        l.id AS lemma_id,
+        l.lemma,
+        k.normquery AS keyword,
+        sp.freq
+    FROM lemmas l
+    JOIN kw_lemmas kl ON l.id = kl.lemma_id
+    JOIN kw k ON kl.kw_id = k.id
+    JOIN search_phrases sp ON k.normquery = sp.kw
+    WHERE l.id IN (` + lemmaArray + `)
+    ORDER BY sp.freq DESC
+    LIMIT $1 OFFSET $2;
+    `
+
+	rows, err := s.client.Query(ctx, query, req.Limit, req.Offset)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query with lemmas: %w", err)
+	}
+	defer rows.Close()
+
+	resp := &pb.GetKeywordsByLemmasResp{}
+	for rows.Next() {
+		var keyword pb.KeywordByLemma
+		err := rows.Scan(&keyword.LemmaID, &keyword.Lemma, &keyword.Keyword, &keyword.Freq)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		resp.Keywords = append(resp.Keywords, &keyword)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating rows: %w", err)
+	}
+
+	return resp, nil
 }

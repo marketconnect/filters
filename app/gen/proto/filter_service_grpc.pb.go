@@ -22,6 +22,7 @@ const (
 	FilterService_GetFilterValues_FullMethodName     = "/main.FilterService/GetFilterValues"
 	FilterService_GetSearchQuery_FullMethodName      = "/main.FilterService/GetSearchQuery"
 	FilterService_GetLemmasByFilterID_FullMethodName = "/main.FilterService/GetLemmasByFilterID"
+	FilterService_GetKeywordsByLemmas_FullMethodName = "/main.FilterService/GetKeywordsByLemmas"
 )
 
 // FilterServiceClient is the client API for FilterService service.
@@ -31,6 +32,7 @@ type FilterServiceClient interface {
 	GetFilterValues(ctx context.Context, in *GetFilterValuesReq, opts ...grpc.CallOption) (*GetFilterValuesResp, error)
 	GetSearchQuery(ctx context.Context, in *GetSearchQueryReq, opts ...grpc.CallOption) (*GetSearchQueryResp, error)
 	GetLemmasByFilterID(ctx context.Context, in *GetLemmasByFilterIDReq, opts ...grpc.CallOption) (*GetLemmasByFilterIDResp, error)
+	GetKeywordsByLemmas(ctx context.Context, in *GetKeywordsByLemmasReq, opts ...grpc.CallOption) (*GetKeywordsByLemmasResp, error)
 }
 
 type filterServiceClient struct {
@@ -68,6 +70,15 @@ func (c *filterServiceClient) GetLemmasByFilterID(ctx context.Context, in *GetLe
 	return out, nil
 }
 
+func (c *filterServiceClient) GetKeywordsByLemmas(ctx context.Context, in *GetKeywordsByLemmasReq, opts ...grpc.CallOption) (*GetKeywordsByLemmasResp, error) {
+	out := new(GetKeywordsByLemmasResp)
+	err := c.cc.Invoke(ctx, FilterService_GetKeywordsByLemmas_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // FilterServiceServer is the server API for FilterService service.
 // All implementations must embed UnimplementedFilterServiceServer
 // for forward compatibility
@@ -75,6 +86,7 @@ type FilterServiceServer interface {
 	GetFilterValues(context.Context, *GetFilterValuesReq) (*GetFilterValuesResp, error)
 	GetSearchQuery(context.Context, *GetSearchQueryReq) (*GetSearchQueryResp, error)
 	GetLemmasByFilterID(context.Context, *GetLemmasByFilterIDReq) (*GetLemmasByFilterIDResp, error)
+	GetKeywordsByLemmas(context.Context, *GetKeywordsByLemmasReq) (*GetKeywordsByLemmasResp, error)
 	mustEmbedUnimplementedFilterServiceServer()
 }
 
@@ -90,6 +102,9 @@ func (UnimplementedFilterServiceServer) GetSearchQuery(context.Context, *GetSear
 }
 func (UnimplementedFilterServiceServer) GetLemmasByFilterID(context.Context, *GetLemmasByFilterIDReq) (*GetLemmasByFilterIDResp, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetLemmasByFilterID not implemented")
+}
+func (UnimplementedFilterServiceServer) GetKeywordsByLemmas(context.Context, *GetKeywordsByLemmasReq) (*GetKeywordsByLemmasResp, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetKeywordsByLemmas not implemented")
 }
 func (UnimplementedFilterServiceServer) mustEmbedUnimplementedFilterServiceServer() {}
 
@@ -158,6 +173,24 @@ func _FilterService_GetLemmasByFilterID_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _FilterService_GetKeywordsByLemmas_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetKeywordsByLemmasReq)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(FilterServiceServer).GetKeywordsByLemmas(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: FilterService_GetKeywordsByLemmas_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(FilterServiceServer).GetKeywordsByLemmas(ctx, req.(*GetKeywordsByLemmasReq))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // FilterService_ServiceDesc is the grpc.ServiceDesc for FilterService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -176,6 +209,10 @@ var FilterService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetLemmasByFilterID",
 			Handler:    _FilterService_GetLemmasByFilterID_Handler,
+		},
+		{
+			MethodName: "GetKeywordsByLemmas",
+			Handler:    _FilterService_GetKeywordsByLemmas_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

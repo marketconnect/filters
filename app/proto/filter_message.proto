@@ -26,7 +26,7 @@ message GetSearchQueryResp {
 }
 
 
-// keywords by filter
+// lemmas by filter
 message GetLemmasByFilterIDReq {
     int64 filterID = 1;
     int32 limit    = 2; 
@@ -34,10 +34,30 @@ message GetLemmasByFilterIDReq {
 }
 
 message LemmaByFilter {
-    string lemma  = 1;
-    int32 totalFrequency   = 2;
+    int64 lemmaID = 1;
+    string lemma  = 2;
+    int32 totalFrequency   = 3;
 }
 
 message GetLemmasByFilterIDResp {
     repeated LemmaByFilter lemmas = 1;
+}
+
+// keywords by lemmas
+message GetKeywordsByLemmasReq {
+    repeated int64  lemmasIDs = 1;
+    int32 limit    = 2; 
+    int32 offset   = 3;
+}
+
+message KeywordByLemma {
+    int32 lemmaID  = 1;
+    string lemma   = 2;        
+    string keyword = 3;  
+    int32 freq     = 4;  
+    
+}
+
+message GetKeywordsByLemmasResp {
+    repeated KeywordByLemma keywords = 1;
 }
