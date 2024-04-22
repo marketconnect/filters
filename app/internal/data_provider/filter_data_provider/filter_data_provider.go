@@ -161,21 +161,23 @@ func (s *filterStorage) GetKeywordsByLemmas(ctx context.Context, req *pb.GetKeyw
 	lemmaArray := strings.Join(lemmaIDs, ",")
 
 	query := `
-    SELECT 
-        l.id AS lemma_id,
-        l.lemma,
-        k.normquery AS keyword,
-        sp.freq
-    FROM lemmas l
-    JOIN kw_lemmas kl ON l.id = kl.lemma_id
-    JOIN kw k ON kl.kw_id = k.id
-    JOIN search_phrases sp ON k.normquery = sp.kw
-    WHERE l.id IN (` + lemmaArray + `)
-    ORDER BY sp.freq DESC
-    LIMIT $1 OFFSET $2;
+		SELECT DISTINCT
+		l.id AS lemma_id,
+		l.lemma,
+		k.normquery AS keyword,
+		sp.freq
+		FROM lemmas l
+		JOIN kw_lemmas kl ON l.id = kl.lemma_id
+		JOIN kw k ON kl.kw_id = k.id
+		JOIN categories c ON k.id = c.kw_id
+		JOIN search_phrases sp ON k.normquery = sp.kw
+		WHERE l.id IN (` + lemmaArray + `)
+		AND c.filter_id = $3 
+		ORDER BY sp.freq DESC
+		LIMIT $1 OFFSET $2;
     `
 
-	rows, err := s.client.Query(ctx, query, req.Limit, req.Offset)
+	rows, err := s.client.Query(ctx, query, req.Limit, req.Offset, req.FilterID)
 	if err != nil {
 		return nil, fmt.Errorf("failed to execute query with lemmas: %w", err)
 	}

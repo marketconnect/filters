@@ -34,8 +34,8 @@ message GetLemmasByFilterIDReq {
 }
 
 message LemmaByFilter {
-    int64 lemmaID = 1;
-    string lemma  = 2;
+    int64 lemmaID          = 1;
+    string lemma           = 2;
     int32 totalFrequency   = 3;
 }
 
@@ -46,8 +46,9 @@ message GetLemmasByFilterIDResp {
 // keywords by lemmas
 message GetKeywordsByLemmasReq {
     repeated int64  lemmasIDs = 1;
-    int32 limit    = 2; 
-    int32 offset   = 3;
+    int64 filterID            = 2;
+    int32 limit               = 3; 
+    int32 offset              = 4;
 }
 
 message KeywordByLemma {
