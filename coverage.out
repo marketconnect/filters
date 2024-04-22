@@ -12,6 +12,11 @@ filters/app/app/app.go:85.16,87.3 1 0
 filters/app/app/app.go:88.2,90.16 3 0
 filters/app/app/app.go:90.16,92.3 1 0
 filters/app/app/app.go:93.2,93.12 1 0
+filters/app/cmd/main.go:15.13,21.16 5 0
+filters/app/cmd/main.go:21.16,23.3 1 0
+filters/app/cmd/main.go:25.2,34.16 7 0
+filters/app/cmd/main.go:34.16,36.3 1 0
+filters/app/cmd/main.go:38.2,40.12 2 0
 filters/app/gen/proto/filter_message.pb.go:32.38,34.29 2 0
 filters/app/gen/proto/filter_message.pb.go:34.29,38.3 3 0
 filters/app/gen/proto/filter_message.pb.go:41.46,43.2 1 0
@@ -291,11 +296,6 @@ filters/app/gen/proto/filter_service_grpc.pb.go:174.24,176.3 1 0
 filters/app/gen/proto/filter_service_grpc.pb.go:177.2,181.77 2 0
 filters/app/gen/proto/filter_service_grpc.pb.go:181.77,183.3 1 0
 filters/app/gen/proto/filter_service_grpc.pb.go:184.2,184.44 1 0
-filters/app/cmd/main.go:15.13,21.16 5 0
-filters/app/cmd/main.go:21.16,23.3 1 0
-filters/app/cmd/main.go:25.2,34.16 7 0
-filters/app/cmd/main.go:34.16,36.3 1 0
-filters/app/cmd/main.go:38.2,40.12 2 0
 filters/app/internal/config/config.go:39.26,41.17 1 1
 filters/app/internal/config/config.go:41.17,48.52 3 1
 filters/app/internal/config/config.go:48.52,53.18 3 0
