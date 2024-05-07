@@ -15,7 +15,7 @@ CREATE TABLE public.search_phrases (
 
 CREATE INDEX idx_search_phrases_kw ON search_phrases(kw);
 
-CREATE TABLE kw (
+CREATE TABLE public.kw (
     id SERIAL PRIMARY KEY,        
     name TEXT NOT NULL,          
     normquery TEXT NOT NULL,     
@@ -23,10 +23,9 @@ CREATE TABLE kw (
 );
 CREATE INDEX idx_kw_on_normquery ON kw (normquery);
 
-CREATE TABLE categories (
+CREATE TABLE public.categories (
     id SERIAL PRIMARY KEY,
     kw_id INTEGER NOT NULL,
-    filter_name TEXT NOT NULL,
     name TEXT NOT NULL,
     filter_id INTEGER NOT NULL,
     count INTEGER NOT NULL,    
@@ -36,12 +35,12 @@ CREATE TABLE categories (
 CREATE INDEX idx_categories_on_kw_id ON categories (kw_id);
 CREATE INDEX idx_categories_on_filter_id ON categories (filter_id);
 
-CREATE TABLE lemmas (
+CREATE TABLE public.lemmas (
     id SERIAL PRIMARY KEY,
     lemma TEXT NOT NULL UNIQUE
 );
 
-CREATE TABLE kw_lemmas (
+CREATE TABLE public.kw_lemmas (
     kw_id INTEGER NOT NULL,
     lemma_id INTEGER NOT NULL,
     FOREIGN KEY (kw_id) REFERENCES kw (id),
