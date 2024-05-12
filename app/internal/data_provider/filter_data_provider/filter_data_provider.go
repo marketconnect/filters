@@ -69,9 +69,14 @@ func (s *filterStorage) GetDistinctNames(ctx context.Context, filterName string)
 
 func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error) {
 	valuesStr := "VALUES "
+	// for _, phrase := range phrases {
+	// 	valuesStr += fmt.Sprintf("('%s'),", phrase)
+	// }
 	for _, phrase := range phrases {
-		valuesStr += fmt.Sprintf("('%s'),", phrase)
+		escapedPhrase := strings.ReplaceAll(phrase, "'", "''") // Escape single quotes
+		valuesStr += fmt.Sprintf("('%s'),", escapedPhrase)
 	}
+
 	valuesStr = valuesStr[:len(valuesStr)-1] // Remove the last comma
 
 	// Construct the full SQL query
