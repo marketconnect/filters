@@ -34,6 +34,21 @@ func getLogger() *zap.SugaredLogger {
 
 type FakeFilterDataProvider struct{}
 
+func (f *FakeFilterDataProvider) GetKeywordsByWords(ctx context.Context, req *pb.GetKeywordsByWordsReq) (*pb.GetKeywordsByWordsResp, error) {
+	// This is a simple example assuming the words map directly to keywords
+	keywords := make([]*pb.KeywordByLemma, 0)
+	for _, word := range req.Words {
+		keyword := &pb.KeywordByLemma{
+			LemmaID: 1, // Example ID
+			Lemma:   word,
+			Keyword: fmt.Sprintf("keyword for %s", word),
+			Freq:    100, // Example frequency
+		}
+		keywords = append(keywords, keyword)
+	}
+	return &pb.GetKeywordsByWordsResp{Keywords: keywords}, nil
+}
+
 func (f *FakeFilterDataProvider) GetDistinctNames(ctx context.Context, filterName string) ([]string, error) {
 	return []string{"FilterValue1", "FilterValue2"}, nil
 }
@@ -144,6 +159,29 @@ func TestGetKeywordsByLemmas(t *testing.T) {
 	expected := []*pb.KeywordByLemma{
 		{LemmaID: 1, Lemma: "lemma1", Keyword: "keyword for lemma1", Freq: 100},
 		{LemmaID: 2, Lemma: "lemma2", Keyword: "keyword for lemma2", Freq: 200},
+	}
+	assert.Equal(t, expected, resp.Keywords, "Expected keywords do not match the actual data")
+}
+
+func TestGetKeywordsByWords(t *testing.T) {
+	ctx := createContextWithMetadata("validToken")
+
+	service := filter_service.NewFilterService(&FakeFilterDataProvider{}, &FakeTokenManager{}, getLogger())
+
+	req := &pb.GetKeywordsByWordsReq{
+		Words: []string{"optimize", "performance"},
+	}
+
+	// Call the GetKeywordsByWords method
+	resp, err := service.GetKeywordsByWords(ctx, req)
+	assert.NoError(t, err)
+	assert.NotNil(t, resp)
+	assert.Len(t, resp.Keywords, 2, "Should return two keywords for the given words")
+
+	// Check if the keywords are correct
+	expected := []*pb.KeywordByLemma{
+		{LemmaID: 1, Lemma: "optimize", Keyword: "keyword for optimize", Freq: 100},
+		{LemmaID: 1, Lemma: "performance", Keyword: "keyword for performance", Freq: 100},
 	}
 	assert.Equal(t, expected, resp.Keywords, "Expected keywords do not match the actual data")
 }

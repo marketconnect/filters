@@ -11,6 +11,7 @@ service FilterService {
     rpc GetSearchQuery(GetSearchQueryReq) returns (GetSearchQueryResp);
     rpc GetLemmasByFilterID(GetLemmasByFilterIDReq) returns (GetLemmasByFilterIDResp);
     rpc GetKeywordsByLemmas(GetKeywordsByLemmasReq) returns (GetKeywordsByLemmasResp);
+    rpc GetKeywordsByWords(GetKeywordsByWordsReq) returns (GetKeywordsByWordsResp);
 }
 
 

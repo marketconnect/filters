@@ -17,6 +17,7 @@ type FilterDataProvider interface {
 	GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error)
 	GetLemmasByFilterID(ctx context.Context, filterID int64) ([]*pb.LemmaByFilter, error)
 	GetKeywordsByLemmas(ctx context.Context, req *pb.GetKeywordsByLemmasReq) (*pb.GetKeywordsByLemmasResp, error)
+	GetKeywordsByWords(ctx context.Context, req *pb.GetKeywordsByWordsReq) (*pb.GetKeywordsByWordsResp, error)
 }
 type TokenManager interface {
 	Verify(accessToken string) (*uint64, error)
@@ -197,6 +198,46 @@ func (service *FilterService) GetKeywordsByLemmas(ctx context.Context, req *pb.G
 	if err != nil {
 		service.logger.Error("could not get keywords by lemmas: %v", err)
 		return nil, status.Errorf(codes.Internal, "could not get keywords by lemmas: %v", err)
+	}
+
+	return keywordsResp, nil
+}
+
+func (service *FilterService) GetKeywordsByWords(ctx context.Context, req *pb.GetKeywordsByWordsReq) (*pb.GetKeywordsByWordsResp, error) {
+	md, ok := metadata.FromIncomingContext(ctx)
+	if !ok {
+		service.logger.Error("metadata is not provided")
+		return nil, status.Errorf(codes.Unauthenticated, "metadata is not provided")
+	}
+
+	values := md["authorization"]
+	if len(values) == 0 {
+		service.logger.Error("authorization token is not provided")
+		return nil, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
+	}
+
+	accessToken := values[0]
+	userID, err := service.tokenManager.Verify(accessToken)
+	if err != nil {
+		service.logger.Error("access token is invalid (userID): %v", err, userID)
+		return nil, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
+	}
+
+	if req == nil {
+		service.logger.Error("request is nil")
+		return nil, status.Error(codes.InvalidArgument, "request is nil")
+	}
+
+	if len(req.Words) == 0 {
+		service.logger.Error("words are required")
+		return nil, status.Error(codes.InvalidArgument, "words are required")
+	}
+
+	// Fetch keywords for the provided words
+	keywordsResp, err := service.filterDataProvider.GetKeywordsByWords(ctx, req)
+	if err != nil {
+		service.logger.Error("could not get keywords by words: %v", err)
+		return nil, status.Errorf(codes.Internal, "could not get keywords by words: %v", err)
 	}
 
 	return keywordsResp, nil

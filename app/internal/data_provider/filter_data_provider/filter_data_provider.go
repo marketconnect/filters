@@ -204,3 +204,49 @@ func (s *filterStorage) GetKeywordsByLemmas(ctx context.Context, req *pb.GetKeyw
 
 	return resp, nil
 }
+
+func (s *filterStorage) GetKeywordsByWords(ctx context.Context, req *pb.GetKeywordsByWordsReq) (*pb.GetKeywordsByWordsResp, error) {
+	// Converting words to a string suitable for IN clause
+	wordsArray := make([]string, len(req.Words))
+	for i, word := range req.Words {
+		wordsArray[i] = fmt.Sprintf("'%s'", strings.ReplaceAll(word, "'", "''")) // Escape single quotes
+	}
+	wordsList := strings.Join(wordsArray, ",")
+
+	query := `
+    SELECT
+        l.id AS lemma_id,
+        l.lemma,
+        k.normquery AS keyword,
+        sp.freq
+    FROM
+        lemmas l
+    JOIN kw_lemmas kl ON l.id = kl.lemma_id
+    JOIN kw k ON kl.kw_id = k.id
+    JOIN search_phrases sp ON k.normquery = sp.kw
+    WHERE
+        l.lemma IN (` + wordsList + `);
+    `
+
+	rows, err := s.client.Query(ctx, query)
+	if err != nil {
+		return nil, fmt.Errorf("failed to execute query: %w", err)
+	}
+	defer rows.Close()
+
+	resp := &pb.GetKeywordsByWordsResp{}
+	for rows.Next() {
+		var keyword pb.KeywordByLemma
+		err := rows.Scan(&keyword.LemmaID, &keyword.Lemma, &keyword.Keyword, &keyword.Freq)
+		if err != nil {
+			return nil, fmt.Errorf("failed to scan row: %w", err)
+		}
+		resp.Keywords = append(resp.Keywords, &keyword)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, fmt.Errorf("error iterating rows: %w", err)
+	}
+
+	return resp, nil
+}

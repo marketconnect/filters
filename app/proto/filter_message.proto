@@ -56,9 +56,16 @@ message KeywordByLemma {
     string lemma   = 2;        
     string keyword = 3;  
     int32 freq     = 4;  
-    
 }
 
 message GetKeywordsByLemmasResp {
+    repeated KeywordByLemma keywords = 1;
+}
+
+message GetKeywordsByWordsReq {
+    repeated string words = 1;
+}
+
+message GetKeywordsByWordsResp {
     repeated KeywordByLemma keywords = 1;
 }

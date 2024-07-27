@@ -574,6 +574,100 @@ func (x *GetKeywordsByLemmasResp) GetKeywords() []*KeywordByLemma {
 	return nil
 }
 
+type GetKeywordsByWordsReq struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Words []string `protobuf:"bytes,1,rep,name=words,proto3" json:"words,omitempty"`
+}
+
+func (x *GetKeywordsByWordsReq) Reset() {
+	*x = GetKeywordsByWordsReq{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_filter_message_proto_msgTypes[10]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetKeywordsByWordsReq) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetKeywordsByWordsReq) ProtoMessage() {}
+
+func (x *GetKeywordsByWordsReq) ProtoReflect() protoreflect.Message {
+	mi := &file_filter_message_proto_msgTypes[10]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetKeywordsByWordsReq.ProtoReflect.Descriptor instead.
+func (*GetKeywordsByWordsReq) Descriptor() ([]byte, []int) {
+	return file_filter_message_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetKeywordsByWordsReq) GetWords() []string {
+	if x != nil {
+		return x.Words
+	}
+	return nil
+}
+
+type GetKeywordsByWordsResp struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Keywords []*KeywordByLemma `protobuf:"bytes,1,rep,name=keywords,proto3" json:"keywords,omitempty"`
+}
+
+func (x *GetKeywordsByWordsResp) Reset() {
+	*x = GetKeywordsByWordsResp{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_filter_message_proto_msgTypes[11]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *GetKeywordsByWordsResp) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetKeywordsByWordsResp) ProtoMessage() {}
+
+func (x *GetKeywordsByWordsResp) ProtoReflect() protoreflect.Message {
+	mi := &file_filter_message_proto_msgTypes[11]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetKeywordsByWordsResp.ProtoReflect.Descriptor instead.
+func (*GetKeywordsByWordsResp) Descriptor() ([]byte, []int) {
+	return file_filter_message_proto_rawDescGZIP(), []int{11}
+}
+
+func (x *GetKeywordsByWordsResp) GetKeywords() []*KeywordByLemma {
+	if x != nil {
+		return x.Keywords
+	}
+	return nil
+}
+
 var File_filter_message_proto protoreflect.FileDescriptor
 
 var file_filter_message_proto_rawDesc = []byte{
@@ -628,8 +722,16 @@ var file_filter_message_proto_rawDesc = []byte{
 	0x79, 0x4c, 0x65, 0x6d, 0x6d, 0x61, 0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x30, 0x0a, 0x08, 0x6b,
 	0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e,
 	0x6d, 0x61, 0x69, 0x6e, 0x2e, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x42, 0x79, 0x4c, 0x65,
-	0x6d, 0x6d, 0x61, 0x52, 0x08, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x42, 0x09, 0x5a,
-	0x07, 0x2e, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6d, 0x6d, 0x61, 0x52, 0x08, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x22, 0x2d, 0x0a,
+	0x15, 0x47, 0x65, 0x74, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x42, 0x79, 0x57, 0x6f,
+	0x72, 0x64, 0x73, 0x52, 0x65, 0x71, 0x12, 0x14, 0x0a, 0x05, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x18,
+	0x01, 0x20, 0x03, 0x28, 0x09, 0x52, 0x05, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x22, 0x4a, 0x0a, 0x16,
+	0x47, 0x65, 0x74, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x42, 0x79, 0x57, 0x6f, 0x72,
+	0x64, 0x73, 0x52, 0x65, 0x73, 0x70, 0x12, 0x30, 0x0a, 0x08, 0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72,
+	0x64, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x14, 0x2e, 0x6d, 0x61, 0x69, 0x6e, 0x2e,
+	0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x42, 0x79, 0x4c, 0x65, 0x6d, 0x6d, 0x61, 0x52, 0x08,
+	0x6b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x73, 0x42, 0x09, 0x5a, 0x07, 0x2e, 0x2f, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -644,7 +746,7 @@ func file_filter_message_proto_rawDescGZIP() []byte {
 	return file_filter_message_proto_rawDescData
 }
 
-var file_filter_message_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
+var file_filter_message_proto_msgTypes = make([]protoimpl.MessageInfo, 12)
 var file_filter_message_proto_goTypes = []interface{}{
 	(*GetFilterValuesReq)(nil),      // 0: main.GetFilterValuesReq
 	(*GetFilterValuesResp)(nil),     // 1: main.GetFilterValuesResp
@@ -656,15 +758,18 @@ var file_filter_message_proto_goTypes = []interface{}{
 	(*GetKeywordsByLemmasReq)(nil),  // 7: main.GetKeywordsByLemmasReq
 	(*KeywordByLemma)(nil),          // 8: main.KeywordByLemma
 	(*GetKeywordsByLemmasResp)(nil), // 9: main.GetKeywordsByLemmasResp
+	(*GetKeywordsByWordsReq)(nil),   // 10: main.GetKeywordsByWordsReq
+	(*GetKeywordsByWordsResp)(nil),  // 11: main.GetKeywordsByWordsResp
 }
 var file_filter_message_proto_depIdxs = []int32{
 	5, // 0: main.GetLemmasByFilterIDResp.lemmas:type_name -> main.LemmaByFilter
 	8, // 1: main.GetKeywordsByLemmasResp.keywords:type_name -> main.KeywordByLemma
-	2, // [2:2] is the sub-list for method output_type
-	2, // [2:2] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	8, // 2: main.GetKeywordsByWordsResp.keywords:type_name -> main.KeywordByLemma
+	3, // [3:3] is the sub-list for method output_type
+	3, // [3:3] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_filter_message_proto_init() }
@@ -793,6 +898,30 @@ func file_filter_message_proto_init() {
 				return nil
 			}
 		}
+		file_filter_message_proto_msgTypes[10].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetKeywordsByWordsReq); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_filter_message_proto_msgTypes[11].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*GetKeywordsByWordsResp); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
@@ -800,7 +929,7 @@ func file_filter_message_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_filter_message_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   10,
+			NumMessages:   12,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
