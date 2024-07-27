@@ -213,20 +213,37 @@ func (s *filterStorage) GetKeywordsByWords(ctx context.Context, req *pb.GetKeywo
 	}
 	wordsList := strings.Join(wordsArray, ",")
 
+	// query := `
+	// SELECT
+	//     l.id AS lemma_id,
+	//     l.lemma,
+	//     k.normquery AS keyword,
+	//     sp.freq
+	// FROM
+	//     lemmas l
+	// JOIN kw_lemmas kl ON l.id = kl.lemma_id
+	// JOIN kw k ON kl.kw_id = k.id
+	// JOIN search_phrases sp ON k.normquery = sp.kw
+	// WHERE
+	//     l.lemma IN (` + wordsList + `);
+	// `
+
 	query := `
-    SELECT
-        l.id AS lemma_id,
-        l.lemma,
-        k.normquery AS keyword,
-        sp.freq
-    FROM
-        lemmas l
-    JOIN kw_lemmas kl ON l.id = kl.lemma_id
-    JOIN kw k ON kl.kw_id = k.id
-    JOIN search_phrases sp ON k.normquery = sp.kw
-    WHERE
-        l.lemma IN (` + wordsList + `);
-    `
+	SELECT DISTINCT ON (k.normquery)
+    l.id AS lemma_id,
+    l.lemma,
+    k.normquery AS keyword,
+    sp.freq
+	FROM
+		lemmas l
+	JOIN kw_lemmas kl ON l.id = kl.lemma_id
+	JOIN kw k ON kl.kw_id = k.id
+	JOIN search_phrases sp ON k.normquery = sp.kw
+	WHERE
+		 l.lemma IN (` + wordsList + `)
+	ORDER BY
+    	k.normquery, sp.freq DESC;
+	`
 
 	rows, err := s.client.Query(ctx, query)
 	if err != nil {

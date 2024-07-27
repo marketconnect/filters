@@ -48,7 +48,7 @@ CREATE TABLE public.kw_lemmas (
     PRIMARY KEY (kw_id, lemma_id)
 );
 
-CREATE USER test_user WITH ENCRYPTED PASSWORD 'test_user_031501';
+CREATE USER test_user WITH ENCRYPTED PASSWORD 'password';
 GRANT CONNECT ON DATABASE parsing TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.filters TO test_user;
 GRANT ALL PRIVILEGES ON TABLE public.kw TO test_user;
