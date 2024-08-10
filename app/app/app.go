@@ -6,6 +6,7 @@ import (
 	"filters/app/internal/domain/service/filter_service"
 	"fmt"
 	"net"
+	"net/http"
 	"strconv"
 
 	"filters/app/internal/data_provider/filter_data_provider"
@@ -14,12 +15,12 @@ import (
 
 	pb "filters/app/gen/proto"
 
+	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
 	"github.com/marketconnect/db_client/postgresql"
 	"github.com/marketconnect/jwt_manager"
 	"github.com/marketconnect/logger"
 	"golang.org/x/sync/errgroup"
 	"google.golang.org/grpc"
-	// "google.golang.org/grpc/reflection"
 )
 
 type App struct {
@@ -46,22 +47,13 @@ func NewApp(config *config.Config, logger logger.Logger) (App, error) {
 	jwtManager := jwt_manager.NewJWTManager(config.Jwt.SecretKey, time.Duration((time.Minute * time.Duration(tokenDuration))))
 
 	// Data Providers
-
 	filterDataProvider := filter_data_provider.NewFilterStorage(pgClient)
 
 	// Services
-
 	filterService := filter_service.NewFilterService(filterDataProvider, jwtManager, logger)
 
-	// interceptor := auth_interceptor.NewAuthInterceptor(subscriptionDataProvider, tokenManager)
-
-	// grpcServer := grpc.NewServer(grpc.UnaryInterceptor(interceptor.Unary()))
 	grpcServer := grpc.NewServer()
-
 	pb.RegisterFilterServiceServer(grpcServer, filterService)
-
-	// Включение Reflection
-	// reflection.Register(grpcServer)
 
 	return App{
 		cfg:        config,
@@ -75,20 +67,31 @@ func (a *App) Run(ctx context.Context) error {
 	grp.Go(func() error {
 		return a.startGRPC(ctx)
 	})
+	grp.Go(func() error {
+		return a.startREST(ctx)
+	})
 	return grp.Wait()
 }
 
 func (a *App) startGRPC(ctx context.Context) error {
-	a.logger.Info("start GRPC")
+	a.logger.Info("Starting gRPC server...")
 	address := fmt.Sprintf("%s:%s", a.cfg.GRPC.IP, a.cfg.GRPC.Port)
 	listener, err := net.Listen("tcp", address)
 	if err != nil {
 		a.logger.Fatal("cannot start GRPC server: ", err)
 	}
-	a.logger.Info("start GRPC server on address %s", address)
-	err = a.grpcServer.Serve(listener)
+	a.logger.Info("gRPC server running on ", address)
+	return a.grpcServer.Serve(listener)
+}
+
+func (a *App) startREST(ctx context.Context) error {
+	a.logger.Info("Starting REST server...")
+	mux := runtime.NewServeMux()
+	opts := []grpc.DialOption{grpc.WithInsecure()}
+	err := pb.RegisterFilterServiceHandlerFromEndpoint(ctx, mux, fmt.Sprintf("%s:%s", a.cfg.GRPC.IP, a.cfg.GRPC.Port), opts)
 	if err != nil {
-		a.logger.Fatal("cannot start GRPC server: ", err)
+		a.logger.Fatal("cannot start REST server: ", err)
 	}
-	return nil
+	a.logger.Info("REST server running on port 8081")
+	return http.ListenAndServe(":8081", mux)
 }

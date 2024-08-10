@@ -1,0 +1,353 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "filter_service.proto",
+    "version": "version not set"
+  },
+  "tags": [
+    {
+      "name": "FilterService"
+    }
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/v1/filter/values": {
+      "get": {
+        "operationId": "FilterService_GetFilterValues",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mainGetFilterValuesResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filterName",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "FilterService"
+        ]
+      }
+    },
+    "/v1/keywords/by-lemmas": {
+      "post": {
+        "operationId": "FilterService_GetKeywordsByLemmas",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mainGetKeywordsByLemmasResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mainGetKeywordsByLemmasReq"
+            }
+          }
+        ],
+        "tags": [
+          "FilterService"
+        ]
+      }
+    },
+    "/v1/keywords/by-words": {
+      "post": {
+        "operationId": "FilterService_GetKeywordsByWords",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mainGetKeywordsByWordsResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/mainGetKeywordsByWordsReq"
+            }
+          }
+        ],
+        "tags": [
+          "FilterService"
+        ]
+      }
+    },
+    "/v1/lemmas/by-filter": {
+      "get": {
+        "operationId": "FilterService_GetLemmasByFilterID",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mainGetLemmasByFilterIDResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "filterID",
+            "in": "query",
+            "required": false,
+            "type": "string",
+            "format": "int64"
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          },
+          {
+            "name": "offset",
+            "in": "query",
+            "required": false,
+            "type": "integer",
+            "format": "int32"
+          }
+        ],
+        "tags": [
+          "FilterService"
+        ]
+      }
+    },
+    "/v1/search/query": {
+      "get": {
+        "operationId": "FilterService_GetSearchQuery",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/mainGetSearchQueryResp"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "queries",
+            "in": "query",
+            "required": false,
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "collectionFormat": "multi"
+          }
+        ],
+        "tags": [
+          "FilterService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "mainGetFilterValuesResp": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mainGetKeywordsByLemmasReq": {
+      "type": "object",
+      "properties": {
+        "lemmasIDs": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "format": "int64"
+          }
+        },
+        "filterID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "limit": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "offset": {
+          "type": "integer",
+          "format": "int32"
+        }
+      },
+      "title": "keywords by lemmas"
+    },
+    "mainGetKeywordsByLemmasResp": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/mainKeywordByLemma"
+          }
+        }
+      }
+    },
+    "mainGetKeywordsByWordsReq": {
+      "type": "object",
+      "properties": {
+        "words": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "mainGetKeywordsByWordsResp": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/mainKeywordByLemma"
+          }
+        }
+      }
+    },
+    "mainGetLemmasByFilterIDResp": {
+      "type": "object",
+      "properties": {
+        "lemmas": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/mainLemmaByFilter"
+          }
+        }
+      }
+    },
+    "mainGetSearchQueryResp": {
+      "type": "object",
+      "properties": {
+        "frequencies": {
+          "type": "array",
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "mainKeywordByLemma": {
+      "type": "object",
+      "properties": {
+        "lemmaID": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "lemma": {
+          "type": "string"
+        },
+        "keyword": {
+          "type": "string"
+        },
+        "freq": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "mainLemmaByFilter": {
+      "type": "object",
+      "properties": {
+        "lemmaID": {
+          "type": "string",
+          "format": "int64"
+        },
+        "lemma": {
+          "type": "string"
+        },
+        "totalFrequency": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "protobufAny": {
+      "type": "object",
+      "properties": {
+        "@type": {
+          "type": "string"
+        }
+      },
+      "additionalProperties": {}
+    },
+    "rpcStatus": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        },
+        "details": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "$ref": "#/definitions/protobufAny"
+          }
+        }
+      }
+    }
+  }
+}

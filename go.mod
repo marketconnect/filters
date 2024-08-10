@@ -1,26 +1,29 @@
 module filters
 
-go 1.21
+go 1.20
 
 // toolchain go1.22
 
 // toolchain go1.22.2
 
 require (
+	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/marketconnect/db_client v0.0.0-20240130092742-c1ef87ec2f9d
 	github.com/marketconnect/jwt_manager v0.0.0-20240130084931-ed0fdd306d48
 	github.com/marketconnect/logger v0.0.0-20240130085356-6d4f083fc3fa
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
-	golang.org/x/sync v0.6.0
-	google.golang.org/grpc v1.62.1
-	google.golang.org/protobuf v1.33.0
+	golang.org/x/sync v0.8.0
+	google.golang.org/genproto/googleapis/api v0.0.0-20240723171418-e6d459c13d2a
+	google.golang.org/grpc v1.65.0
+	google.golang.org/protobuf v1.34.2
 )
 
 require (
-	github.com/cespare/xxhash/v2 v2.2.0 // indirect
+	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
+	github.com/rogpeppe/go-internal v1.12.0 // indirect
 )
 
 require (
@@ -28,7 +31,6 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/golang-jwt/jwt v3.2.2+incompatible // indirect
-	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/jackc/chunkreader/v2 v2.0.1 // indirect
 	github.com/jackc/pgconn v1.14.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
@@ -42,11 +44,11 @@ require (
 	github.com/onsi/gomega v1.32.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	go.uber.org/multierr v1.10.0 // indirect
-	golang.org/x/crypto v0.18.0 // indirect
-	golang.org/x/net v0.20.0 // indirect
-	golang.org/x/sys v0.16.0 // indirect
-	golang.org/x/text v0.14.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240123012728-ef4313101c80 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/text v0.17.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240808171019-573a1156607a // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	olympos.io/encoding/edn v0.0.0-20201019073823-d3554ca0b0a3 // indirect
 )

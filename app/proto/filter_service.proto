@@ -3,15 +3,41 @@ syntax = "proto3";
 package main;
 
 option go_package = "./proto";
+import "google/api/annotations.proto";
 
 import "filter_message.proto";
 
 service FilterService {
-    rpc GetFilterValues(GetFilterValuesReq) returns (GetFilterValuesResp);
-    rpc GetSearchQuery(GetSearchQueryReq) returns (GetSearchQueryResp);
-    rpc GetLemmasByFilterID(GetLemmasByFilterIDReq) returns (GetLemmasByFilterIDResp);
-    rpc GetKeywordsByLemmas(GetKeywordsByLemmasReq) returns (GetKeywordsByLemmasResp);
-    rpc GetKeywordsByWords(GetKeywordsByWordsReq) returns (GetKeywordsByWordsResp);
-}
+    rpc GetFilterValues(GetFilterValuesReq) returns (GetFilterValuesResp) {
+        option (google.api.http) = {
+            get: "/v1/filter/values"
+        };
+    }
 
+    rpc GetSearchQuery(GetSearchQueryReq) returns (GetSearchQueryResp) {
+        option (google.api.http) = {
+            get: "/v1/search/query"
+        };
+    }
+
+    rpc GetLemmasByFilterID(GetLemmasByFilterIDReq) returns (GetLemmasByFilterIDResp) {
+        option (google.api.http) = {
+            get: "/v1/lemmas/by-filter"
+        };
+    }
+
+    rpc GetKeywordsByLemmas(GetKeywordsByLemmasReq) returns (GetKeywordsByLemmasResp) {
+        option (google.api.http) = {
+            post: "/v1/keywords/by-lemmas"
+            body: "*"
+        };
+    }
+
+    rpc GetKeywordsByWords(GetKeywordsByWordsReq) returns (GetKeywordsByWordsResp) {
+        option (google.api.http) = {
+            post: "/v1/keywords/by-words"
+            body: "*"
+        };
+    }
+}
 
