@@ -27,6 +27,11 @@ type Config struct {
 		SecretKey     string `env:"JWT_SECRET_KEY" env-required:"true"`
 		TokenDuration string `env:"JWT_TOKEN_DURATION" env-required:"true"`
 	}
+
+	Telegram struct {
+		ChatID   string `env:"TELEGRAM_CHAT_ID" env-required:"true"`
+		BotToken string `env:"TELEGRAM_BOT_TOKEN" env-required:"true"`
+	}
 }
 
 // Singleton: Config should only ever be created once

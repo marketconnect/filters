@@ -69,9 +69,7 @@ func (s *filterStorage) GetDistinctNames(ctx context.Context, filterName string)
 
 func (s *filterStorage) GetFrequencies(ctx context.Context, phrases []string) ([]uint32, error) {
 	valuesStr := "VALUES "
-	// for _, phrase := range phrases {
-	// 	valuesStr += fmt.Sprintf("('%s'),", phrase)
-	// }
+
 	for _, phrase := range phrases {
 		escapedPhrase := strings.ReplaceAll(phrase, "'", "''") // Escape single quotes
 		valuesStr += fmt.Sprintf("('%s'),", escapedPhrase)
@@ -212,21 +210,6 @@ func (s *filterStorage) GetKeywordsByWords(ctx context.Context, req *pb.GetKeywo
 		wordsArray[i] = fmt.Sprintf("'%s'", strings.ReplaceAll(word, "'", "''")) // Escape single quotes
 	}
 	wordsList := strings.Join(wordsArray, ",")
-
-	// query := `
-	// SELECT
-	//     l.id AS lemma_id,
-	//     l.lemma,
-	//     k.normquery AS keyword,
-	//     sp.freq
-	// FROM
-	//     lemmas l
-	// JOIN kw_lemmas kl ON l.id = kl.lemma_id
-	// JOIN kw k ON kl.kw_id = k.id
-	// JOIN search_phrases sp ON k.normquery = sp.kw
-	// WHERE
-	//     l.lemma IN (` + wordsList + `);
-	// `
 
 	query := `
 	SELECT DISTINCT ON (k.normquery)

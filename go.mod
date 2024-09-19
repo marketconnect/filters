@@ -1,6 +1,8 @@
 module filters
 
-go 1.20
+go 1.21.6
+
+toolchain go1.23.0
 
 // toolchain go1.22
 
@@ -11,7 +13,7 @@ require (
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/marketconnect/db_client v0.0.0-20240130092742-c1ef87ec2f9d
 	github.com/marketconnect/jwt_manager v0.0.0-20240130084931-ed0fdd306d48
-	github.com/marketconnect/logger v0.0.0-20240130085356-6d4f083fc3fa
+	github.com/marketconnect/logger v0.0.0-20240919134320-34bd849ae62c
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/sync v0.8.0
