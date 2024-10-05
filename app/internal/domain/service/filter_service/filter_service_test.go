@@ -87,9 +87,9 @@ func (f *FakeFilterDataProvider) GetKeywordsByLemmas(ctx context.Context, req *p
 
 type FakeTokenManager struct{}
 
-func (f *FakeTokenManager) Verify(accessToken string) (*uint64, error) {
+func (f *FakeTokenManager) VerifyWithSubscription(accessToken string) (*uint64, *string, *string, error) {
 	userID := uint64(123)
-	return &userID, nil
+	return &userID, nil, nil, nil
 }
 
 func createContextWithMetadata(token string) context.Context {

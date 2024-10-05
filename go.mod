@@ -12,7 +12,7 @@ require (
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.21.0
 	github.com/ilyakaznacheev/cleanenv v1.5.0
 	github.com/marketconnect/db_client v0.0.0-20240130092742-c1ef87ec2f9d
-	github.com/marketconnect/jwt_manager v0.0.0-20240130084931-ed0fdd306d48
+	github.com/marketconnect/jwt_manager v0.0.0-20241005135811-e554742580b0
 	github.com/marketconnect/logger v0.0.0-20240919134320-34bd849ae62c
 	github.com/stretchr/testify v1.9.0
 	go.uber.org/zap v1.27.0

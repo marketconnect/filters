@@ -104,6 +104,8 @@ github.com/marketconnect/db_client v0.0.0-20240130092742-c1ef87ec2f9d h1:r3E+xAJ
 github.com/marketconnect/db_client v0.0.0-20240130092742-c1ef87ec2f9d/go.mod h1:Vlz1Z0uLZsq3mNU/vPTz8rb54ApLfW9P+JM3yGGlXhQ=
 github.com/marketconnect/jwt_manager v0.0.0-20240130084931-ed0fdd306d48 h1:2ZcHizodgJJ0zCTubmUsBe+hZFMlasmBHg3Z0wBrNU4=
 github.com/marketconnect/jwt_manager v0.0.0-20240130084931-ed0fdd306d48/go.mod h1:+jmyMXnJiknWJ5gBAPIq1IoS3qprve72l8CHULC79Xg=
+github.com/marketconnect/jwt_manager v0.0.0-20241005135811-e554742580b0 h1:cJnR5Uey9SWg3jSH/8hb5GfbTQW7CIGLq/RsnilT9K4=
+github.com/marketconnect/jwt_manager v0.0.0-20241005135811-e554742580b0/go.mod h1:+jmyMXnJiknWJ5gBAPIq1IoS3qprve72l8CHULC79Xg=
 github.com/marketconnect/logger v0.0.0-20240130085356-6d4f083fc3fa h1:hbAkOhTSbuQKIYApz8kRT/BVZyCjHoQWpdogQ34Qxsg=
 github.com/marketconnect/logger v0.0.0-20240130085356-6d4f083fc3fa/go.mod h1:FUP3d01R26R2N1IZZlpweawKcnzeIPV0Cf1PnYW//QI=
 github.com/marketconnect/logger v0.0.0-20240919134320-34bd849ae62c h1:vqTH1lGnTN0cQLnWNt6HZTWWxf4sYd4nlnTuKOtm/aU=

@@ -20,7 +20,7 @@ type FilterDataProvider interface {
 	GetKeywordsByWords(ctx context.Context, req *pb.GetKeywordsByWordsReq) (*pb.GetKeywordsByWordsResp, error)
 }
 type TokenManager interface {
-	Verify(accessToken string) (*uint64, error)
+	VerifyWithSubscription(accessToken string) (*uint64, *string, *string, error)
 }
 
 type FilterService struct {
@@ -53,7 +53,7 @@ func (service *FilterService) GetFilterValues(ctx context.Context, req *pb.GetFi
 	}
 
 	accessToken := values[0]
-	userID, err := service.tokenManager.Verify(accessToken)
+	userID, _, _, err := service.tokenManager.VerifyWithSubscription(accessToken)
 	if err != nil {
 		service.logger.Error("access token is invalid (userID): %v", err, userID)
 		return &pb.GetFilterValuesResp{}, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
@@ -167,7 +167,7 @@ func (service *FilterService) GetKeywordsByWords(ctx context.Context, req *pb.Ge
 	}
 
 	accessToken := values[0]
-	userID, err := service.tokenManager.Verify(accessToken)
+	userID, _, _, err := service.tokenManager.VerifyWithSubscription(accessToken)
 	if err != nil {
 		service.logger.Error("access token is invalid (userID): %v", err, userID)
 		return nil, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
