@@ -77,28 +77,12 @@ func (service *FilterService) GetFilterValues(ctx context.Context, req *pb.GetFi
 	}, nil
 }
 
+// Since the method above is an api, and token checking is used for the method, it is not used in this method.
 func (service *FilterService) GetSearchQuery(ctx context.Context, req *pb.GetSearchQueryReq) (*pb.GetSearchQueryResp, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		service.logger.Error("metadata is not provided")
-		return &pb.GetSearchQueryResp{}, status.Errorf(codes.Unauthenticated, "metadata is not provided")
-	}
 
-	values := md["authorization"]
-	if len(values) == 0 {
-		service.logger.Error("authorization token is not provided")
-		return &pb.GetSearchQueryResp{}, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
-	}
-
-	accessToken := values[0]
-	userID, err := service.tokenManager.Verify(accessToken)
-	if err != nil {
-		service.logger.Error("access token is invalid (userID): %v", err, userID)
-		return &pb.GetSearchQueryResp{}, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
-	}
 	// Validate input parameters
 	if req == nil {
-		service.logger.Error("request is nil (userID: %d)", userID)
+		service.logger.Error("request is nil")
 		return nil, status.Error(codes.InvalidArgument, "request is nil")
 	}
 	// Validate input parameters
@@ -125,25 +109,8 @@ func (service *FilterService) GetSearchQuery(ctx context.Context, req *pb.GetSea
 	}, nil
 }
 
+// Since the method above is an api, and token checking is used for the method, it is not used in this method.
 func (service *FilterService) GetLemmasByFilterID(ctx context.Context, req *pb.GetLemmasByFilterIDReq) (*pb.GetLemmasByFilterIDResp, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		service.logger.Error("metadata is not provided")
-		return nil, status.Errorf(codes.Unauthenticated, "metadata is not provided")
-	}
-
-	values := md["authorization"]
-	if len(values) == 0 {
-		service.logger.Error("authorization token is not provided")
-		return nil, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
-	}
-
-	accessToken := values[0]
-	userID, err := service.tokenManager.Verify(accessToken)
-	if err != nil {
-		service.logger.Error("access token is invalid (userID): %v", err, userID)
-		return nil, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
-	}
 
 	if req == nil {
 		service.logger.Error("request is nil")
@@ -163,25 +130,8 @@ func (service *FilterService) GetLemmasByFilterID(ctx context.Context, req *pb.G
 	return &pb.GetLemmasByFilterIDResp{Lemmas: lemmas}, nil
 }
 
+// Since the method above is an api, and token checking is used for the method, it is not used in this method.
 func (service *FilterService) GetKeywordsByLemmas(ctx context.Context, req *pb.GetKeywordsByLemmasReq) (*pb.GetKeywordsByLemmasResp, error) {
-	md, ok := metadata.FromIncomingContext(ctx)
-	if !ok {
-		service.logger.Error("metadata is not provided")
-		return nil, status.Errorf(codes.Unauthenticated, "metadata is not provided")
-	}
-
-	values := md["authorization"]
-	if len(values) == 0 {
-		service.logger.Error("authorization token is not provided")
-		return nil, status.Errorf(codes.Unauthenticated, "authorization token is not provided")
-	}
-
-	accessToken := values[0]
-	userID, err := service.tokenManager.Verify(accessToken)
-	if err != nil {
-		service.logger.Error("access token is invalid (userID): %v", err, userID)
-		return nil, status.Errorf(codes.Unauthenticated, "access token is invalid: %v", err)
-	}
 
 	if req == nil {
 		service.logger.Error("request is nil")
